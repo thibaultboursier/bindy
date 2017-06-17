@@ -28,7 +28,7 @@ class Core {
             .map((el) => this.register(el))
             .forEach((el) => this.add(el));
 
-        if (this.temp.length !== 0) {
+        if (Object.keys(this.temp).length !== 0) {
             this.watch();
         }
     }
