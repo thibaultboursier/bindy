@@ -36,12 +36,18 @@ class Binding {
             obj,
             target,
             key,
-            keypath
+            keypath,
+            val
         } = this;
+
+        // Binding's value is rendered if it's defined.
+        if (val) {
+            this.render(val);
+        }
 
         Object.defineProperty(obj || target, key, {
             enumerable: true,
-            set: (val) => this.update(val)
+            set: (newVal) => this.update(newVal)
         })
 
         return this;
@@ -49,11 +55,23 @@ class Binding {
 
     /**
      * Update binding's output.
-     * @param {*} val - Binding's new value.
+     * @param {*} newVal - Binding's new value.
      * @return {Object}
      */
-    update(val) {
-        this.val = val;
+    update(newVal) {
+        this.val = newVal;
+
+        this.render();
+
+        return this;
+    }
+
+    /**
+     * Update binding's output.
+     * @param {*} val - Binding's value.
+     * @return {Object}
+     */
+    render(val = this.val) {
         this.el.innerText = val;
 
         return this;
@@ -158,4 +176,19 @@ class View {
             .parseKeypath()
             .bind();
     }
+}
+
+function error(message) {
+    throw new Error('[bindy] ' + message)
+}
+
+// Export module for Node and the browser.
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = Bindy;
+} else if (typeof define === 'function' && define.amd) {
+    define([], function () {
+        return this.Bindy = Bindy;
+    })
+} else {
+    this.Bindy = Bindy;
 }
