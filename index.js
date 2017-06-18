@@ -122,7 +122,7 @@ class View {
      * Initialize view.
      */
     init() {
-        this.DOMList = Array.from(this.DOM.querySelectorAll('[bind]'));
+        this.DOMList = Array.from(this.DOM.querySelectorAll(`[${this.prefix}-bind]`));
         this.DOMList
             .map((el) => this.register(el))
             .forEach((binding) => this.bind(binding));
@@ -134,7 +134,7 @@ class View {
      * @return {Object}
      */
     register(el) {
-        const keypath = el.getAttribute('bind');
+        const keypath = el.getAttribute(`${this.prefix}-bind`);
         const {
             target
         } = this;
