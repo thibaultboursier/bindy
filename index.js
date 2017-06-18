@@ -1,105 +1,77 @@
 'use strict';
 
 class Bindy {}
+
 Bindy.bind = (...args) => {
-    const core = new Core(...args);
-    core.init();
+    const view = new View(...args);
+    view.init();
 };
 
-class Core {
-    constructor(target, DOM) {
-        if (!target) {
-            throw new Error('You must provide an object for binding.');
-        }
-
-        if (!DOM) {
-            throw new Error('You must provide an HTML element for binding.');
-        }
-
-        this.target = target;
-        this.DOM = DOM;
-        this.temp = {};
-        this.bindings = {};
-    }
-
-    init() {
-        this.DOMList = Array.from(this.DOM.querySelectorAll('[bind]'));
-        this.DOMList
-            .map((el) => this.register(el))
-            .forEach((el) => this.add(el));
-
-        if (Object.keys(this.temp).length !== 0) {
-            this.watch();
-        }
-    }
-
-    register(el) {
-        const property = el.getAttribute('bind');
-        this.bindings[property] = el;
-        return property;
-    }
-
-    add(property) {
-        const binding = this.getBinding(property);
-
-        if (!binding.val) {
-            return this.temp[property] = null;
-        }
-
-        this.bind(binding);
-    }
-
-    addNewProperty({
-        obj,
-        key,
-        val,
-        property
+/**
+ * Class representing a binding.
+ */
+class Binding {
+    /**
+     * Create a binding.
+     * @param {Object}
+     */
+    constructor({
+        el,
+        keypath,
+        target
     }) {
-        delete this.temp[property];
-        this.bind({
+        Object.assign(this, {
+            el,
+            keypath,
+            target
+        });
+    }
+
+    /**
+     * Initialize binding.
+     * @return {Object}
+     */
+    bind() {
+        const {
             obj,
+            target,
             key,
-            val,
-            property
-        });
-        this.updateDOM({
-            property,
-            val
-        });
-    }
+            keypath
+        } = this;
 
-    bind({
-        obj,
-        key,
-        val,
-        property
-    }) {
-        Object.defineProperty(obj || this.target, key, {
+        Object.defineProperty(obj || target, key, {
             enumerable: true,
-            set: (val) => this.updateDOM({
-                property,
-                val
-            })
+            set: (val) => this.update(val)
         })
+
+        return this;
     }
 
-    updateDOM({
-        property,
-        val
-    }) {
-        const el = this.bindings[property];
-        el.innerText = val;
+    /**
+     * Update binding's output.
+     * @param {*} val - Binding's new value.
+     * @return {Object}
+     */
+    update(val) {
+        this.val = val;
+        this.el.innerText = val;
+
+        return this;
     }
 
-    getBinding(property) {
-        const parts = property.split('.');
+    /**
+     * Parse binding's keypath.
+     * @return {Object}
+     */
+    parseKeypath() {
+        const keys = this.keypath.split('.');
         const {
             length
-        } = parts;
+        } = keys;
         let obj;
         let key;
 
-        let val = parts.reduce((prev, curr, index) => {
+        let val = keys.reduce((prev, curr, index) => {
             switch (index) {
                 case length - 1:
                     key = curr;
@@ -110,30 +82,80 @@ class Core {
             }
 
             return prev ? prev[curr] : undefined;
-        }, scope);
+        }, this.target);
 
-        return {
+        Object.assign(this, {
             obj,
             key,
-            val,
-            property
-        };
-    }
+            val
+        });
 
-    watch() {
-        setInterval(() => {
-            for (let property in this.temp) {
-                if (!this.temp.hasOwnProperty(property)) return;
-
-                const binding = this.getBinding(property);
-
-                if (binding.val) {
-                    this.addNewProperty(binding);
-                }
-            }
-        }, 200);
+        return this;
     }
 }
 
-let scope = {};
-const bindy = Bindy.bind(scope, document.body);
+/**
+ * Class representing a view.
+ */
+class View {
+    /**
+     * Create a view.
+     * @param {Object} target - Target.
+     * @param {HTMLElement} DOM - DOM. 
+     */
+    constructor(target, DOM) {
+        if (!target) {
+            throw new Error('You must provide an object for binding.');
+        }
+
+        if (!DOM) {
+            throw new Error('You must provide an HTML element for binding.');
+        }
+
+        this.prefix = 'bd';
+        this.target = target;
+        this.DOM = DOM;
+        this.bindings = [];
+    }
+
+    /**
+     * Initialize view.
+     */
+    init() {
+        this.DOMList = Array.from(this.DOM.querySelectorAll('[bind]'));
+        this.DOMList
+            .map((el) => this.register(el))
+            .forEach((binding) => this.bind(binding));
+    }
+
+    /**
+     * Register HTMLElement and create new binding.
+     * @param {Object} el - HTML element.
+     * @return {Object}
+     */
+    register(el) {
+        const keypath = el.getAttribute('bind');
+        const {
+            target
+        } = this;
+        const binding = new Binding({
+            el,
+            keypath,
+            target
+        });
+
+        this.bindings.push(binding);
+
+        return binding;
+    }
+
+    /**
+     * Initialize binding on binding object.
+     * @param {Object} binding 
+     */
+    bind(binding) {
+        binding
+            .parseKeypath()
+            .bind();
+    }
+}
