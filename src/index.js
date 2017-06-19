@@ -21,13 +21,4 @@ Bindy.bind = (...args) => {
 };
 
 // Export module for Node and the browser.
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = Bindy;
-    window.Bindy = Bindy;
-} else if (typeof define === 'function' && define.amd) {
-    define([], function () {
-        return this.Bindy = Bindy;
-    })
-} else {
-    this.Bindy = Bindy;
-}
+window.Bindy = Bindy;

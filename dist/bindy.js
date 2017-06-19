@@ -68,7 +68,7 @@
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
+
 
 const {View} = __webpack_require__(1);
 
@@ -91,17 +91,7 @@ Bindy.bind = (...args) => {
 };
 
 // Export module for Node and the browser.
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = Bindy;
-    window.Bindy = Bindy;
-} else if (true) {
-    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_RESULT__ = function () {
-        return this.Bindy = Bindy;
-    }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__))
-} else {
-    this.Bindy = Bindy;
-}
+window.Bindy = Bindy;
 
 /***/ }),
 /* 1 */
