@@ -6,15 +6,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Document</title>
-  <script src="index.js" defer></script>
+  <script src="../dist/bindy.js" defer></script>
 </head>
 
 <body>
 
   <div id="container">
+    <h1>Welcome {{user.name}}</h1>
     <p>
-      <span bd-text="name">
-    </span>
+      Your city is <span bd-text="user.city"></span>
+    </p>
+    <p>
+      <input type="text" bd-model="user.city">
     </p>
   </div>
 
