@@ -75,7 +75,17 @@ class Binding {
      * @return {Object}
      */
     render(val = this.val) {
-        this.el.innerText = val;
+        const {
+            nodeType
+        } = this.el;
+
+        switch (nodeType) {
+            case 1:
+                this.el.innerText = val;
+                break;
+            case 3:
+                this.el.textContent = val;
+        }
 
         return this;
     }
@@ -144,7 +154,7 @@ class View {
                 this.register({
                     el,
                     keypath
-                })
+                });
             }
         };
     }
@@ -212,7 +222,7 @@ class View {
                 results = this.parseAttributes(attributes);
                 break;
             case 3:
-                // Databinding with delimiters is not supported for now.
+                results = this.parseTextNode(node);
                 break;
         }
 
@@ -223,6 +233,25 @@ class View {
 
         // Call recursively getChildNodes method.
         childNodes.forEach(this.getChildNodes.bind(this));
+    }
+
+    /**
+     * Parse text node to find expressions.
+     * @param {Object}
+     */
+    parseTextNode({
+        textContent
+    }) {
+        const binder = 'text';
+
+        if (/{{(.*?)}}/.test(textContent)) {
+            const value = textContent.trim().match(/{{(.*?)}}/)[1];
+
+            return [{
+                binder,
+                value
+            }];
+        }
     }
 
     /**
