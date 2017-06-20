@@ -1,6 +1,6 @@
 'use strict';
 
-const {Binding} = require('./binding');
+const { Binding } = require('./binding');
 
 /**
  * Class representing a view.
@@ -79,15 +79,7 @@ export class View {
      * Update bindings.
      * @param {Object}
      */
-    update({
-        detail: {
-            keypath,
-            value
-        }
-    }) {
-        this.bindings.filter(binding => binding.keypath === keypath)
-            .forEach(binding => binding.update(value));
-    }
+    update() { }
 
     /**
      * Refresh.

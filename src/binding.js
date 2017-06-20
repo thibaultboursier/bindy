@@ -60,7 +60,7 @@ export class Binding {
 
         Object.defineProperty(obj, key, {
             enumerable: true,
-            set: (newVal) => this.emit(newVal)
+            set: (newVal) => this.update(newVal)
         })
 
         return this;
@@ -75,12 +75,13 @@ export class Binding {
             obj,
             key,
             keypath,
-            val
+            val,
+            target
         } = this;
         const handler = (event) => {
             const value = event.target.value;
 
-            this.emit(value);
+            obj[key] = value;
         }
 
         el.addEventListener('keyup', handler);
@@ -93,16 +94,9 @@ export class Binding {
     /**
      * Broadcast event.
      */
-    emit(value) {
-        const {
-            DOM,
-            keypath
-        } = this;
+    emit() {
         const updateEvent = new CustomEvent('update', {
-            detail: {
-                keypath,
-                value
-            }
+            detail: {}
         });
 
         this.DOM.dispatchEvent(updateEvent);

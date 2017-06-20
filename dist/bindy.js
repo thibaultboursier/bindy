@@ -101,7 +101,7 @@ window.Bindy = Bindy;
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 
-const {Binding} = __webpack_require__(3);
+const { Binding } = __webpack_require__(2);
 
 /**
  * Class representing a view.
@@ -180,15 +180,7 @@ class View {
      * Update bindings.
      * @param {Object}
      */
-    update({
-        detail: {
-            keypath,
-            value
-        }
-    }) {
-        this.bindings.filter(binding => binding.keypath === keypath)
-            .forEach(binding => binding.update(value));
-    }
+    update() { }
 
     /**
      * Refresh.
@@ -335,8 +327,7 @@ function error(message) {
 }
 
 /***/ }),
-/* 2 */,
-/* 3 */
+/* 2 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -403,7 +394,7 @@ class Binding {
 
         Object.defineProperty(obj, key, {
             enumerable: true,
-            set: (newVal) => this.emit(newVal)
+            set: (newVal) => this.update(newVal)
         })
 
         return this;
@@ -418,12 +409,13 @@ class Binding {
             obj,
             key,
             keypath,
-            val
+            val,
+            target
         } = this;
         const handler = (event) => {
             const value = event.target.value;
 
-            this.emit(value);
+            obj[key] = value;
         }
 
         el.addEventListener('keyup', handler);
@@ -436,16 +428,9 @@ class Binding {
     /**
      * Broadcast event.
      */
-    emit(value) {
-        const {
-            DOM,
-            keypath
-        } = this;
+    emit() {
         const updateEvent = new CustomEvent('update', {
-            detail: {
-                keypath,
-                value
-            }
+            detail: {}
         });
 
         this.DOM.dispatchEvent(updateEvent);
