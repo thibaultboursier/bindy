@@ -3,10 +3,10 @@
  * @param {Object}
  * @return {Object}
  */
-export const parseKeypath = ({
+export const parseKeypath = function parseKeypath({
     keypath,
     target
-}) => {
+}) {
     const keys = keypath.split('.');
     const {
         length
@@ -14,7 +14,7 @@ export const parseKeypath = ({
     let obj;
     let key;
 
-    let val = keys.reduce((prev, curr, index) => {
+    const val = keys.reduce((prev, curr, index) => {
         switch (index) {
             case length - 1:
                 key = curr;

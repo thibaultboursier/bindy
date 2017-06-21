@@ -1,4 +1,14 @@
-/******/ (function(modules) { // webpackBootstrap
+(function webpackUniversalModuleDefinition(root, factory) {
+	if(typeof exports === 'object' && typeof module === 'object')
+		module.exports = factory();
+	else if(typeof define === 'function' && define.amd)
+		define([], factory);
+	else if(typeof exports === 'object')
+		exports["Bindy"] = factory();
+	else
+		root["Bindy"] = factory();
+})(this, function() {
+return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
 /******/
@@ -70,57 +80,80 @@
 "use strict";
 
 
-const {View} = __webpack_require__(1);
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var _require = __webpack_require__(1),
+    View = _require.View;
 
 /**
  * Class representing a bindy.
  */
-class Bindy {}
+
+
+var Bindy = function Bindy() {
+    _classCallCheck(this, Bindy);
+};
 
 /**
  * Bind.
  * @public
  * @static
  */
-Bindy.bind = (...args) => {
-    const view = new View(...args);
+
+
+Bindy.bind = function () {
+    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+        args[_key] = arguments[_key];
+    }
+
+    var view = new (Function.prototype.bind.apply(View, [null].concat(args)))();
 
     view.init();
 
     return view;
 };
 
-// Export module for Node and the browser.
-window.Bindy = Bindy;
+module.exports = Bindy;
 
 /***/ }),
 /* 1 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 
-const {
-    Binding
-} = __webpack_require__(2);
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var _require = __webpack_require__(2),
+    Binding = _require.Binding;
+
+var utils = __webpack_require__(4);
 
 /**
  * Class representing a view.
  */
-class View {
+
+var View = exports.View = function () {
     /**
      * Create a view.
      * @param {Object} target - Target.
      * @param {HTMLElement} DOM - DOM. 
      */
-    constructor(target, DOM) {
+    function View(target, DOM) {
+        _classCallCheck(this, View);
+
         if (!target) {
-            error('You must provide an object for binding.');
+            utils.error('You must provide an object for binding.');
         }
 
         if (!DOM) {
-            error('You must provide an HTML element for binding.');
+            utils.error('You must provide an HTML element for binding.');
         }
 
         this.prefix = 'bd';
@@ -128,38 +161,27 @@ class View {
         this.DOM = DOM;
         this.bindings = [];
         this.binders = {
-            text(el, value) {
-                const keypath = value;
-                const type = 'property';
+            text: function text(el, value) {
+                var keypath = value;
+                var type = 'property';
 
                 this.register({
-                    el,
-                    keypath,
-                    type
+                    el: el,
+                    keypath: keypath,
+                    type: type
                 });
             },
-            model(el, value) {
-                const keypath = value;
-                const type = 'event';
+            model: function model(el, value) {
+                var keypath = value;
+                var type = 'event';
 
                 this.register({
-                    el,
-                    keypath,
-                    type
+                    el: el,
+                    keypath: keypath,
+                    type: type
                 });
             }
         };
-    }
-
-    /**
-     * Initialize view.
-     */
-    init() {
-        // DOM is parsed to look for bindings.
-        this.traverseDOM();
-        // Each binding is initialized.
-        this.bindings.forEach((binding) => binding.bind());
-        this.DOM.addEventListener('update', this.update.bind(this));
     }
 
     /**
@@ -168,187 +190,236 @@ class View {
      * @param {Function} fn - Binder's function.
      * @return {Object}
      */
-    addBinder(key, fn) {
-        if (binders.hasOwnProperty(key)) {
-            error(`Binding [${key}] is already registered.`);
+
+
+    _createClass(View, [{
+        key: 'addBinder',
+        value: function addBinder(key, fn) {
+            if (binders.hasOwnProperty(key)) {
+                error('Binding [' + key + '] is already registered.');
+            }
+
+            this.binders[key] = fn;
+
+            return this;
         }
 
-        this.binders[key] = fn;
+        /**
+         * Initialize view.
+         */
 
-        return this;
-    }
-
-    /**
-     * Update bindings.
-     * @param {Object}
-     */
-    update() {}
-
-    /**
-     * Refresh.
-     */
-    refresh() {
-        this.bindings.length = 0;
-
-        return this.init();
-    }
-
-    /**
-     * For-loop on each DOM node to look for bindings.
-     * @return {Object}
-     */
-    traverseDOM() {
-        this.getChildNodes(this.DOM);
-
-        return this;
-    }
-
-    /**
-     * Get child nodes.
-     * @param {Object} node - Node.
-     */
-    getChildNodes(node) {
-        const bindingRegExp = this.getBindingRegExp();
-        const {
-            childNodes,
-            nodeType,
-            attributes
-        } = node;
-        let results;
-
-        switch (nodeType) {
-            case 1:
-                results = this.parseAttributes(attributes);
-                break;
-            case 3:
-                results = this.parseTextNode(node);
-                break;
+    }, {
+        key: 'init',
+        value: function init() {
+            // DOM is parsed to look for bindings.
+            this.traverseDOM();
+            // Each binding is initialized.
+            this.bindings.forEach(function (binding) {
+                return binding.bind();
+            });
         }
 
-        results && results.forEach(({
-            binder,
-            value
-        }) => this.binders[binder].call(this, node, value));
+        /**
+         * Get binding RegExp.
+         * @return {String}
+         */
 
-        // Call recursively getChildNodes method.
-        childNodes.forEach(this.getChildNodes.bind(this));
-    }
-
-    /**
-     * Parse text node to find expressions.
-     * @param {Object}
-     */
-    parseTextNode({
-        textContent
-    }) {
-        const binder = 'text';
-
-        if (/{{(.*?)}}/.test(textContent)) {
-            const value = textContent.trim().match(/{{(.*?)}}/)[1];
-
-            return [{
-                binder,
-                value
-            }];
+    }, {
+        key: 'getBindingRegExp',
+        value: function getBindingRegExp() {
+            return new RegExp(this.prefix + '-');
         }
-    }
+    }, {
+        key: 'getChildNodes',
 
-    /**
-     * Parse attributes to find binders.
-     */
-    parseAttributes(attributes) {
-        const bindingRegExp = this.getBindingRegExp();
 
-        return Array.from(attributes)
-            .filter(({
-                name
-            }) => bindingRegExp.test(name))
-            .map(({
-                value,
-                name
-            }) => {
-                const binder = name.replace(bindingRegExp, '');
+        /**
+         * Get child nodes.
+         * @param {Object} node - Node.
+         */
+        value: function getChildNodes(node) {
+            var _this = this;
+
+            var bindingRegExp = this.getBindingRegExp();
+            var attributes = node.attributes,
+                childNodes = node.childNodes,
+                nodeType = node.nodeType;
+
+            var results = void 0;
+
+            switch (nodeType) {
+                case 1:
+                    results = this.parseAttributes(attributes);
+                    break;
+                case 3:
+                    results = this.parseTextNode(node);
+                    break;
+            }
+
+            results && results.forEach(function (_ref) {
+                var binder = _ref.binder,
+                    value = _ref.value;
+                return _this.binders[binder].call(_this, node, value);
+            });
+
+            // Call recursively getChildNodes method.
+            childNodes.forEach(this.getChildNodes.bind(this));
+        }
+
+        /**
+         * Parse attributes to find binders.
+         */
+
+    }, {
+        key: 'parseAttributes',
+        value: function parseAttributes(attributes) {
+            var bindingRegExp = this.getBindingRegExp();
+
+            return Array.from(attributes).filter(function (_ref2) {
+                var name = _ref2.name;
+                return bindingRegExp.test(name);
+            }).map(function (_ref3) {
+                var value = _ref3.value,
+                    name = _ref3.name;
+
+                var binder = name.replace(bindingRegExp, '');
 
                 return {
-                    binder,
-                    value
-                }
+                    binder: binder,
+                    value: value
+                };
             });
-    }
+        }
 
-    /**
-     * Register new binding.
-     * @param {Object}
-     * @return {Object}
-     */
-    register({
-        el,
-        keypath,
-        type
-    }) {
-        const {
-            DOM,
-            target
-        } = this;
-        const binding = new Binding({
-            el,
-            keypath,
-            type,
-            target,
-            DOM
-        });
+        /**
+         * Parse text node to find expressions.
+         * @param {Object}
+         */
 
-        this.bindings.push(binding);
+    }, {
+        key: 'parseTextNode',
+        value: function parseTextNode(_ref4) {
+            var textContent = _ref4.textContent;
 
-        return binding;
-    }
+            var binder = 'text';
 
-    /**
-     * Get binding RegExp.
-     * @return {String}
-     */
-    getBindingRegExp() {
-        return new RegExp(`${this.prefix}-`);
-    };
-}
-/* harmony export (immutable) */ __webpack_exports__["View"] = View;
+            if (/{{(.*?)}}/.test(textContent)) {
+                var value = textContent.trim().match(/{{(.*?)}}/)[1];
 
+                return [{
+                    binder: binder,
+                    value: value
+                }];
+            }
+        }
 
-function error(message) {
-    throw new Error('[bindy] ' + message)
-}
+        /**
+         * Refresh.
+         */
+
+    }, {
+        key: 'refresh',
+        value: function refresh() {
+            this.bindings.length = 0;
+
+            return this.init();
+        }
+
+        /**
+         * Register new binding.
+         * @param {Object}
+         * @return {Object}
+         */
+
+    }, {
+        key: 'register',
+        value: function register(_ref5) {
+            var el = _ref5.el,
+                keypath = _ref5.keypath,
+                type = _ref5.type;
+            var DOM = this.DOM,
+                target = this.target;
+
+            var binding = new Binding({
+                DOM: DOM,
+                el: el,
+                keypath: keypath,
+                target: target,
+                type: type
+            });
+
+            this.bindings.push(binding);
+
+            return binding;
+        }
+
+        /**
+         * For-loop on each DOM node to look for bindings.
+         * @return {Object}
+         */
+
+    }, {
+        key: 'traverseDOM',
+        value: function traverseDOM() {
+            this.getChildNodes(this.DOM);
+
+            return this;
+        }
+
+        /**
+         * Update bindings.
+         * @param {Object}
+         */
+
+    }, {
+        key: 'update',
+        value: function update() {}
+    }]);
+
+    return View;
+}();
 
 /***/ }),
 /* 2 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 
-const parser = __webpack_require__(3);
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var parser = __webpack_require__(3);
 
 /**
  * Class representing a binding.
  */
-class Binding {
+
+var Binding = exports.Binding = function () {
     /**
      * Create a binding.
      * @param {Object}
      */
-    constructor({
-        DOM,
-        el,
-        keypath,
-        target,
-        type
-    }) {
+    function Binding(_ref) {
+        var DOM = _ref.DOM,
+            el = _ref.el,
+            keypath = _ref.keypath,
+            target = _ref.target,
+            type = _ref.type;
+
+        _classCallCheck(this, Binding);
+
         Object.assign(this, {
-            DOM,
-            el,
-            keypath,
-            target,
-            type
+            DOM: DOM,
+            el: el,
+            keypath: keypath,
+            target: target,
+            type: type
         });
     }
 
@@ -356,162 +427,190 @@ class Binding {
      * Initialize binding.
      * @return {Object}
      */
-    bind() {
-        const {
-            type
-        } = this;
 
-        this.parseKeypath()
 
-        switch (type) {
-            case 'property':
-                return this.bindProperty();
-            case 'event':
-                return this.bindEvent();
-        }
-    }
+    _createClass(Binding, [{
+        key: 'bind',
+        value: function bind() {
+            var type = this.type;
 
-    /**
-     * Bind property.
-     */
-    bindProperty() {
-        const {
-            obj,
-            target,
-            key,
-            keypath,
-            val
-        } = this;
 
-        // Binding's value is rendered if it's defined.
-        if (val) {
-            this.render(val);
+            this.parseKeypath();
+
+            switch (type) {
+                case 'property':
+                    return this.bindProperty();
+                case 'event':
+                    return this.bindEvent();
+            }
         }
 
-        Object.defineProperty(obj, key, {
-            enumerable: true,
-            set: (newVal) => this.update(newVal)
-        })
+        /**
+         * Bind event.
+         */
 
-        return this;
-    }
+    }, {
+        key: 'bindEvent',
+        value: function bindEvent() {
+            var el = this.el,
+                key = this.key,
+                keypath = this.keypath,
+                obj = this.obj,
+                target = this.target,
+                val = this.val;
 
-    /**
-     * Bind event.
-     */
-    bindEvent() {
-        const {
-            el,
-            obj,
-            key,
-            keypath,
-            val,
-            target
-        } = this;
-        const handler = (event) => {
-            const value = event.target.value;
+            var handler = function handler(event) {
+                var value = event.target.value;
 
-            obj[key] = value;
+                obj[key] = value;
+            };
+
+            el.addEventListener('keyup', handler);
+            el.addEventListener('keydown', handler);
+            el.addEventListener('change', handler);
+
+            return this;
         }
 
-        el.addEventListener('keyup', handler);
-        el.addEventListener('keydown', handler);
-        el.addEventListener('change', handler);
+        /**
+         * Bind property.
+         */
 
-        return this;
-    }
+    }, {
+        key: 'bindProperty',
+        value: function bindProperty() {
+            var _this = this;
 
-    /**
-     * Broadcast event.
-     */
-    emit() {
-        const updateEvent = new CustomEvent('update', {
-            detail: {}
-        });
+            var key = this.key,
+                keypath = this.keypath,
+                obj = this.obj,
+                target = this.target,
+                val = this.val;
 
-        this.DOM.dispatchEvent(updateEvent);
-    }
+            // Binding's value is rendered if it's defined.
 
-    /**
-     * Update binding's output.
-     * @param {*} newVal - Binding's new value.
-     * @return {Object}
-     */
-    update(newVal) {
-        this.val = newVal;
+            if (val) {
+                this.render(val);
+            }
 
-        this.render();
+            if (obj.hasOwnProperty(key)) {
+                Object.defineProperty(obj, key, {
+                    enumerable: true,
+                    set: function set(newVal) {
+                        return _this.update(newVal);
+                    }
+                });
+            };
 
-        return this;
-    }
-
-    /**
-     * Update binding's output.
-     * @param {*} val - Binding's value.
-     * @return {Object}
-     */
-    render(val = this.val) {
-        const {
-            nodeType
-        } = this.el;
-
-        switch (nodeType) {
-            case 1:
-                this.el.innerText = val;
-                break;
-            case 3:
-                this.el.textContent = val;
+            return this;
         }
 
-        return this;
-    }
+        /**
+         * Broadcast event.
+         */
 
-    /**
-     * Parse binding's keypath.
-     * @return {Object}
-     */
-    parseKeypath() {
-        const {
-            keypath,
-            target
-        } = this;
-        const parsing = parser.parseKeypath({
-            keypath,
-            target
-        });
+    }, {
+        key: 'emit',
+        value: function emit() {
+            var updateEvent = new CustomEvent('update', {
+                detail: {}
+            });
 
-        // Parsing result is assigned to binding instance
-        Object.assign(this, parsing);
+            this.DOM.dispatchEvent(updateEvent);
+        }
 
-        return this;
-    }
-}
-/* harmony export (immutable) */ __webpack_exports__["Binding"] = Binding;
+        /**
+         * Parse binding's keypath.
+         * @return {Object}
+         */
 
+    }, {
+        key: 'parseKeypath',
+        value: function parseKeypath() {
+            var keypath = this.keypath,
+                target = this.target;
+
+            var parsing = parser.parseKeypath({
+                keypath: keypath,
+                target: target
+            });
+
+            // Parsing result is assigned to binding instance
+            Object.assign(this, parsing);
+
+            return this;
+        }
+
+        /**
+         * Update binding's output.
+         * @param {*} val - Binding's value.
+         * @return {Object}
+         */
+
+    }, {
+        key: 'render',
+        value: function render() {
+            var val = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.val;
+            var nodeType = this.el.nodeType;
+
+
+            switch (nodeType) {
+                case 1:
+                    this.el.innerText = val;
+                    break;
+                case 3:
+                    this.el.textContent = val;
+            }
+
+            return this;
+        }
+
+        /**
+         * Update binding's output.
+         * @param {*} newVal - Binding's new value.
+         * @return {Object}
+         */
+
+    }, {
+        key: 'update',
+        value: function update(newVal) {
+            this.val = newVal;
+
+            this.render();
+
+            return this;
+        }
+    }]);
+
+    return Binding;
+}();
 
 /***/ }),
 /* 3 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
 /**
  * Parse keypath.
  * @param {Object}
  * @return {Object}
  */
-const parseKeypath = ({
-    keypath,
-    target
-}) => {
-    const keys = keypath.split('.');
-    const {
-        length
-    } = keys;
-    let obj;
-    let key;
+var parseKeypath = exports.parseKeypath = function parseKeypath(_ref) {
+    var keypath = _ref.keypath,
+        target = _ref.target;
 
-    let val = keys.reduce((prev, curr, index) => {
+    var keys = keypath.split('.');
+    var length = keys.length;
+
+    var obj = void 0;
+    var key = void 0;
+
+    var val = keys.reduce(function (prev, curr, index) {
         switch (index) {
             case length - 1:
                 key = curr;
@@ -527,13 +626,30 @@ const parseKeypath = ({
     obj = obj || target;
 
     return {
-        obj,
-        key,
-        val
+        obj: obj,
+        key: key,
+        val: val
     };
 };
-/* harmony export (immutable) */ __webpack_exports__["parseKeypath"] = parseKeypath;
 
+/***/ }),
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+/**
+ * Error handler.
+ * @param {String} message - Message to print.
+ */
+var error = exports.error = function error(message) {
+  throw new Error("[bindy] " + message);
+};
 
 /***/ })
 /******/ ]);
+});

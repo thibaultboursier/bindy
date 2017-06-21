@@ -46,41 +46,16 @@ export class Binding {
     }
 
     /**
-     * Bind property.
-     */
-    bindProperty() {
-        const {
-            obj,
-            target,
-            key,
-            keypath,
-            val
-        } = this;
-
-        // Binding's value is rendered if it's defined.
-        if (val) {
-            this.render(val);
-        }
-
-        Object.defineProperty(obj, key, {
-            enumerable: true,
-            set: (newVal) => this.update(newVal)
-        })
-
-        return this;
-    }
-
-    /**
      * Bind event.
      */
     bindEvent() {
         const {
             el,
-            obj,
             key,
             keypath,
-            val,
-            target
+            obj,
+            target,
+            val
         } = this;
         const handler = (event) => {
             const value = event.target.value;
@@ -91,6 +66,33 @@ export class Binding {
         el.addEventListener('keyup', handler);
         el.addEventListener('keydown', handler);
         el.addEventListener('change', handler);
+
+        return this;
+    }
+
+    /**
+     * Bind property.
+     */
+    bindProperty() {
+        const {
+            key,
+            keypath,
+            obj,
+            target,
+            val
+        } = this;
+
+        // Binding's value is rendered if it's defined.
+        if (val) {
+            this.render(val);
+        }
+
+        if (obj.hasOwnProperty(key)) {
+            Object.defineProperty(obj, key, {
+                enumerable: true,
+                set: (newVal) => this.update(newVal)
+            })
+        };
 
         return this;
     }
@@ -107,14 +109,21 @@ export class Binding {
     }
 
     /**
-     * Update binding's output.
-     * @param {*} newVal - Binding's new value.
+     * Parse binding's keypath.
      * @return {Object}
      */
-    update(newVal) {
-        this.val = newVal;
+    parseKeypath() {
+        const {
+            keypath,
+            target
+        } = this;
+        const parsing = parser.parseKeypath({
+            keypath,
+            target
+        });
 
-        this.render();
+        // Parsing result is assigned to binding instance
+        Object.assign(this, parsing);
 
         return this;
     }
@@ -141,21 +150,14 @@ export class Binding {
     }
 
     /**
-     * Parse binding's keypath.
+     * Update binding's output.
+     * @param {*} newVal - Binding's new value.
      * @return {Object}
      */
-    parseKeypath() {
-        const {
-            keypath,
-            target
-        } = this;
-        const parsing = parser.parseKeypath({
-            keypath,
-            target
-        });
+    update(newVal) {
+        this.val = newVal;
 
-        // Parsing result is assigned to binding instance
-        Object.assign(this, parsing);
+        this.render();
 
         return this;
     }

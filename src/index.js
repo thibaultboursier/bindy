@@ -1,6 +1,8 @@
 'use strict';
 
-const {View} = require('./view');
+const {
+    View
+} = require('./view');
 
 /**
  * Class representing a bindy.
@@ -20,5 +22,4 @@ Bindy.bind = (...args) => {
     return view;
 };
 
-// Export module for Node and the browser.
-window.Bindy = Bindy;
+module.exports = Bindy;

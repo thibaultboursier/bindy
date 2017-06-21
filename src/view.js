@@ -3,6 +3,7 @@
 const {
     Binding
 } = require('./binding');
+const utils = require('./utils');
 
 /**
  * Class representing a view.
@@ -15,11 +16,11 @@ export class View {
      */
     constructor(target, DOM) {
         if (!target) {
-            error('You must provide an object for binding.');
+            utils.error('You must provide an object for binding.');
         }
 
         if (!DOM) {
-            error('You must provide an HTML element for binding.');
+            utils.error('You must provide an HTML element for binding.');
         }
 
         this.prefix = 'bd';
@@ -51,17 +52,6 @@ export class View {
     }
 
     /**
-     * Initialize view.
-     */
-    init() {
-        // DOM is parsed to look for bindings.
-        this.traverseDOM();
-        // Each binding is initialized.
-        this.bindings.forEach((binding) => binding.bind());
-        this.DOM.addEventListener('update', this.update.bind(this));
-    }
-
-    /**
      * Add new binder.
      * @param {String} key - Binder's key.
      * @param {Function} fn - Binder's function.
@@ -78,29 +68,22 @@ export class View {
     }
 
     /**
-     * Update bindings.
-     * @param {Object}
+     * Initialize view.
      */
-    update() {}
-
-    /**
-     * Refresh.
-     */
-    refresh() {
-        this.bindings.length = 0;
-
-        return this.init();
+    init() {
+        // DOM is parsed to look for bindings.
+        this.traverseDOM();
+        // Each binding is initialized.
+        this.bindings.forEach((binding) => binding.bind());
     }
 
     /**
-     * For-loop on each DOM node to look for bindings.
-     * @return {Object}
+     * Get binding RegExp.
+     * @return {String}
      */
-    traverseDOM() {
-        this.getChildNodes(this.DOM);
-
-        return this;
-    }
+    getBindingRegExp() {
+        return new RegExp(`${this.prefix}-`);
+    };
 
     /**
      * Get child nodes.
@@ -109,9 +92,9 @@ export class View {
     getChildNodes(node) {
         const bindingRegExp = this.getBindingRegExp();
         const {
+            attributes,
             childNodes,
-            nodeType,
-            attributes
+            nodeType
         } = node;
         let results;
 
@@ -131,25 +114,6 @@ export class View {
 
         // Call recursively getChildNodes method.
         childNodes.forEach(this.getChildNodes.bind(this));
-    }
-
-    /**
-     * Parse text node to find expressions.
-     * @param {Object}
-     */
-    parseTextNode({
-        textContent
-    }) {
-        const binder = 'text';
-
-        if (/{{(.*?)}}/.test(textContent)) {
-            const value = textContent.trim().match(/{{(.*?)}}/)[1];
-
-            return [{
-                binder,
-                value
-            }];
-        }
     }
 
     /**
@@ -176,6 +140,34 @@ export class View {
     }
 
     /**
+     * Parse text node to find expressions.
+     * @param {Object}
+     */
+    parseTextNode({
+        textContent
+    }) {
+        const binder = 'text';
+
+        if (/{{(.*?)}}/.test(textContent)) {
+            const value = textContent.trim().match(/{{(.*?)}}/)[1];
+
+            return [{
+                binder,
+                value
+            }];
+        }
+    }
+
+    /**
+     * Refresh.
+     */
+    refresh() {
+        this.bindings.length = 0;
+
+        return this.init();
+    }
+
+    /**
      * Register new binding.
      * @param {Object}
      * @return {Object}
@@ -190,11 +182,11 @@ export class View {
             target
         } = this;
         const binding = new Binding({
+            DOM,
             el,
             keypath,
-            type,
             target,
-            DOM
+            type
         });
 
         this.bindings.push(binding);
@@ -203,14 +195,18 @@ export class View {
     }
 
     /**
-     * Get binding RegExp.
-     * @return {String}
+     * For-loop on each DOM node to look for bindings.
+     * @return {Object}
      */
-    getBindingRegExp() {
-        return new RegExp(`${this.prefix}-`);
-    };
-}
+    traverseDOM() {
+        this.getChildNodes(this.DOM);
 
-function error(message) {
-    throw new Error('[bindy] ' + message)
+        return this;
+    }
+
+    /**
+     * Update bindings.
+     * @param {Object}
+     */
+    update() {}
 }

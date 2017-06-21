@@ -17,6 +17,9 @@
   },
   "homepage": "https://github.com/thibaultboursier/bindy#readme",
   "devDependencies": {
+    "babel-core": "^6.25.0",
+    "babel-loader": "^7.1.0",
+    "babel-preset-env": "^1.5.2",
     "webpack": "^3.0.0"
   }
 }
