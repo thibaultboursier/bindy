@@ -1,5 +1,3 @@
-'use strict';
-
 const parser = require('./parser');
 
 /**

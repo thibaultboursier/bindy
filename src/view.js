@@ -1,9 +1,8 @@
-'use strict';
-
 const {
     Binding
 } = require('./binding');
 const utils = require('./utils');
+const binders = require('./binders');
 
 /**
  * Class representing a view.
@@ -27,28 +26,7 @@ export class View {
         this.target = target;
         this.DOM = DOM;
         this.bindings = [];
-        this.binders = {
-            text(el, value) {
-                const keypath = value;
-                const type = 'property';
-
-                this.register({
-                    el,
-                    keypath,
-                    type
-                });
-            },
-            model(el, value) {
-                const keypath = value;
-                const type = 'event';
-
-                this.register({
-                    el,
-                    keypath,
-                    type
-                });
-            }
-        };
+        this.binders = binders;
     }
 
     /**
@@ -78,10 +56,10 @@ export class View {
     }
 
     /**
-     * Get binding RegExp.
+     * Get attribute RegExp.
      * @return {String}
      */
-    getBindingRegExp() {
+    getAttributeRegExp() {
         return new RegExp(`${this.prefix}-`);
     };
 
@@ -90,7 +68,7 @@ export class View {
      * @param {Object} node - Node.
      */
     getChildNodes(node) {
-        const bindingRegExp = this.getBindingRegExp();
+        const regExp = this.getAttributeRegExp();
         const {
             attributes,
             childNodes,
@@ -117,20 +95,28 @@ export class View {
     }
 
     /**
+     * Get interpolation RegExp.
+     * @return {String}
+     */
+    getInterpolationRegExp() {
+        return new RegExp(/{{(.*?)}}/);
+    };
+
+    /**
      * Parse attributes to find binders.
      */
     parseAttributes(attributes) {
-        const bindingRegExp = this.getBindingRegExp();
+        const regExp = this.getAttributeRegExp();
 
         return Array.from(attributes)
             .filter(({
                 name
-            }) => bindingRegExp.test(name))
+            }) => regExp.test(name))
             .map(({
                 value,
                 name
             }) => {
-                const binder = name.replace(bindingRegExp, '');
+                const binder = name.replace(regExp, '');
 
                 return {
                     binder,
@@ -147,9 +133,10 @@ export class View {
         textContent
     }) {
         const binder = 'text';
+        const regExp = this.getInterpolationRegExp();
 
-        if (/{{(.*?)}}/.test(textContent)) {
-            const value = textContent.trim().match(/{{(.*?)}}/)[1];
+        if (regExp.test(textContent)) {
+            const value = textContent.trim().match(regExp)[1];
 
             return [{
                 binder,

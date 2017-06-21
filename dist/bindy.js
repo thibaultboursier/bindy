@@ -134,6 +134,7 @@ var _require = __webpack_require__(2),
     Binding = _require.Binding;
 
 var utils = __webpack_require__(4);
+var binders = __webpack_require__(5);
 
 /**
  * Class representing a view.
@@ -160,28 +161,7 @@ var View = exports.View = function () {
         this.target = target;
         this.DOM = DOM;
         this.bindings = [];
-        this.binders = {
-            text: function text(el, value) {
-                var keypath = value;
-                var type = 'property';
-
-                this.register({
-                    el: el,
-                    keypath: keypath,
-                    type: type
-                });
-            },
-            model: function model(el, value) {
-                var keypath = value;
-                var type = 'event';
-
-                this.register({
-                    el: el,
-                    keypath: keypath,
-                    type: type
-                });
-            }
-        };
+        this.binders = binders;
     }
 
     /**
@@ -220,13 +200,13 @@ var View = exports.View = function () {
         }
 
         /**
-         * Get binding RegExp.
+         * Get attribute RegExp.
          * @return {String}
          */
 
     }, {
-        key: 'getBindingRegExp',
-        value: function getBindingRegExp() {
+        key: 'getAttributeRegExp',
+        value: function getAttributeRegExp() {
             return new RegExp(this.prefix + '-');
         }
     }, {
@@ -240,7 +220,7 @@ var View = exports.View = function () {
         value: function getChildNodes(node) {
             var _this = this;
 
-            var bindingRegExp = this.getBindingRegExp();
+            var regExp = this.getAttributeRegExp();
             var attributes = node.attributes,
                 childNodes = node.childNodes,
                 nodeType = node.nodeType;
@@ -267,22 +247,33 @@ var View = exports.View = function () {
         }
 
         /**
-         * Parse attributes to find binders.
+         * Get interpolation RegExp.
+         * @return {String}
          */
 
     }, {
+        key: 'getInterpolationRegExp',
+        value: function getInterpolationRegExp() {
+            return new RegExp(/{{(.*?)}}/);
+        }
+    }, {
         key: 'parseAttributes',
+
+
+        /**
+         * Parse attributes to find binders.
+         */
         value: function parseAttributes(attributes) {
-            var bindingRegExp = this.getBindingRegExp();
+            var regExp = this.getAttributeRegExp();
 
             return Array.from(attributes).filter(function (_ref2) {
                 var name = _ref2.name;
-                return bindingRegExp.test(name);
+                return regExp.test(name);
             }).map(function (_ref3) {
                 var value = _ref3.value,
                     name = _ref3.name;
 
-                var binder = name.replace(bindingRegExp, '');
+                var binder = name.replace(regExp, '');
 
                 return {
                     binder: binder,
@@ -302,9 +293,10 @@ var View = exports.View = function () {
             var textContent = _ref4.textContent;
 
             var binder = 'text';
+            var regExp = this.getInterpolationRegExp();
 
-            if (/{{(.*?)}}/.test(textContent)) {
-                var value = textContent.trim().match(/{{(.*?)}}/)[1];
+            if (regExp.test(textContent)) {
+                var value = textContent.trim().match(regExp)[1];
 
                 return [{
                     binder: binder,
@@ -648,6 +640,36 @@ Object.defineProperty(exports, "__esModule", {
  */
 var error = exports.error = function error(message) {
   throw new Error("[bindy] " + message);
+};
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+module.exports = {
+    text: function text(el, value) {
+        var keypath = value;
+        var type = 'property';
+
+        this.register({
+            el: el,
+            keypath: keypath,
+            type: type
+        });
+    },
+    model: function model(el, value) {
+        var keypath = value;
+        var type = 'event';
+
+        this.register({
+            el: el,
+            keypath: keypath,
+            type: type
+        });
+    }
 };
 
 /***/ })
