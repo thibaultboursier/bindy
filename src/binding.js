@@ -1,5 +1,7 @@
 'use strict';
 
+const parser = require('./parser');
+
 /**
  * Class representing a binding.
  */
@@ -32,6 +34,8 @@ export class Binding {
         const {
             type
         } = this;
+
+        this.parseKeypath()
 
         switch (type) {
             case 'property':
@@ -141,36 +145,17 @@ export class Binding {
      * @return {Object}
      */
     parseKeypath() {
-        const keys = this.keypath.split('.');
         const {
+            keypath,
             target
         } = this;
-        const {
-            length
-        } = keys;
-        let obj;
-        let key;
-
-        let val = keys.reduce((prev, curr, index) => {
-            switch (index) {
-                case length - 1:
-                    key = curr;
-                    break;
-                case length - 2:
-                    obj = prev[curr];
-                    break;
-            }
-
-            return prev ? prev[curr] : undefined;
-        }, this.target);
-
-        obj = obj || target;
-
-        Object.assign(this, {
-            obj,
-            key,
-            val
+        const parsing = parser.parseKeypath({
+            keypath,
+            target
         });
+
+        // Parsing result is assigned to binding instance
+        Object.assign(this, parsing);
 
         return this;
     }

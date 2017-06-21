@@ -1,6 +1,8 @@
 'use strict';
 
-const { Binding } = require('./binding');
+const {
+    Binding
+} = require('./binding');
 
 /**
  * Class representing a view.
@@ -55,7 +57,7 @@ export class View {
         // DOM is parsed to look for bindings.
         this.traverseDOM();
         // Each binding is initialized.
-        this.bindings.forEach((binding) => this.bind(binding));
+        this.bindings.forEach((binding) => binding.bind());
         this.DOM.addEventListener('update', this.update.bind(this));
     }
 
@@ -79,7 +81,7 @@ export class View {
      * Update bindings.
      * @param {Object}
      */
-    update() { }
+    update() {}
 
     /**
      * Refresh.
@@ -198,16 +200,6 @@ export class View {
         this.bindings.push(binding);
 
         return binding;
-    }
-
-    /**
-     * Initialize binding on binding object.
-     * @param {Object} binding 
-     */
-    bind(binding) {
-        binding
-            .parseKeypath()
-            .bind();
     }
 
     /**

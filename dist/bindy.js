@@ -101,7 +101,9 @@ window.Bindy = Bindy;
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 
-const { Binding } = __webpack_require__(2);
+const {
+    Binding
+} = __webpack_require__(2);
 
 /**
  * Class representing a view.
@@ -156,7 +158,7 @@ class View {
         // DOM is parsed to look for bindings.
         this.traverseDOM();
         // Each binding is initialized.
-        this.bindings.forEach((binding) => this.bind(binding));
+        this.bindings.forEach((binding) => binding.bind());
         this.DOM.addEventListener('update', this.update.bind(this));
     }
 
@@ -180,7 +182,7 @@ class View {
      * Update bindings.
      * @param {Object}
      */
-    update() { }
+    update() {}
 
     /**
      * Refresh.
@@ -302,16 +304,6 @@ class View {
     }
 
     /**
-     * Initialize binding on binding object.
-     * @param {Object} binding 
-     */
-    bind(binding) {
-        binding
-            .parseKeypath()
-            .bind();
-    }
-
-    /**
      * Get binding RegExp.
      * @return {String}
      */
@@ -333,6 +325,8 @@ function error(message) {
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
+
+const parser = __webpack_require__(3);
 
 /**
  * Class representing a binding.
@@ -366,6 +360,8 @@ class Binding {
         const {
             type
         } = this;
+
+        this.parseKeypath()
 
         switch (type) {
             case 'property':
@@ -475,41 +471,68 @@ class Binding {
      * @return {Object}
      */
     parseKeypath() {
-        const keys = this.keypath.split('.');
         const {
+            keypath,
             target
         } = this;
-        const {
-            length
-        } = keys;
-        let obj;
-        let key;
-
-        let val = keys.reduce((prev, curr, index) => {
-            switch (index) {
-                case length - 1:
-                    key = curr;
-                    break;
-                case length - 2:
-                    obj = prev[curr];
-                    break;
-            }
-
-            return prev ? prev[curr] : undefined;
-        }, this.target);
-
-        obj = obj || target;
-
-        Object.assign(this, {
-            obj,
-            key,
-            val
+        const parsing = parser.parseKeypath({
+            keypath,
+            target
         });
+
+        // Parsing result is assigned to binding instance
+        Object.assign(this, parsing);
 
         return this;
     }
 }
 /* harmony export (immutable) */ __webpack_exports__["Binding"] = Binding;
+
+
+/***/ }),
+/* 3 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/**
+ * Parse keypath.
+ * @param {Object}
+ * @return {Object}
+ */
+const parseKeypath = ({
+    keypath,
+    target
+}) => {
+    const keys = keypath.split('.');
+    const {
+        length
+    } = keys;
+    let obj;
+    let key;
+
+    let val = keys.reduce((prev, curr, index) => {
+        switch (index) {
+            case length - 1:
+                key = curr;
+                break;
+            case length - 2:
+                obj = prev[curr];
+                break;
+        }
+
+        return prev ? prev[curr] : undefined;
+    }, target);
+
+    obj = obj || target;
+
+    return {
+        obj,
+        key,
+        val
+    };
+};
+/* harmony export (immutable) */ __webpack_exports__["parseKeypath"] = parseKeypath;
 
 
 /***/ })
