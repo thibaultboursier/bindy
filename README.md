@@ -3,25 +3,47 @@ Databinding is simply with Bindy.
 
 ## How to use it
 
-Create an object :
+First, create an object :
 ```
 let target = {
-  name: 'Peter'
+  user: {
+    name: 'Peter',
+    city: 'Dublin'
+  }
 };
 ```
+
+### Property binding
 
 Bind target's properties to your HTML :
 ```
 <div id="container">
-  <span bind="name"></span>
+  <span bd-bind="user.name"></span>
+</div>
+```
+You can also use string interpolation :
+```
+<div id="container">
+  {{ user.name }}
 </div>
 ```
 
-Work with Bindy :
+### Event binding
+
+For event binding, you must add **bd-model** attribute.
+When input's value is modified, target object is updated.
+```
+<div id="container">
+  <input type="text" bd-model="user.city">
+</div>
+```
+
+### Create a new view
+
 ```
 const container = document.querySelector('#container');
 
-Bindy.bind(target, container);
+const view = Bindy.bind(target, container);
 ```
 
 Update target's properties and DOM will be updated.
