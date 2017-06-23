@@ -1,6 +1,8 @@
 # bindy
 Databinding is simply with Bindy.
 
+[![Build Status](https://api.travis-ci.org/thibaultboursier/bindy.svg?branch=master)](https://travis-ci.org/thibaultboursier/bindy)
+
 ## How to use it
 
 First, create an object :
