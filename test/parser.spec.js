@@ -3,25 +3,25 @@ const {
 } = require('chai');
 const parser = require('../src/parser');
 
-describe('Parser', function () {
+describe('Parser', () => {
 
-    describe('getAttributeRegExp', function () {
-        it('should return a regular expression', function () {
+    describe('getAttributeRegExp', () => {
+        it('should return a regular expression', () => {
             const regExp = parser.getAttributeRegExp();
 
             expect(regExp).to.match(/bd-/);
         });
     });
 
-    describe('getInterpolationRegExp', function () {
-        it('should return a regular expression', function () {
+    describe('getInterpolationRegExp', () => {
+        it('should return a regular expression', () => {
             const regExp = parser.getInterpolationRegExp();
 
             expect(regExp).to.match(/{{(.*?)}}/);
         });
     });
 
-    describe('parseAttributes', function () {
+    describe('parseAttributes', () => {
         const attributes = [{
             name: 'bd-text',
             value: 'user.name'
@@ -32,18 +32,23 @@ describe('Parser', function () {
         const regExp = new RegExp(/bd-/);
         const parsing = parser.parseAttributes(attributes, regExp);
 
-        it('should return an array', function () {
+        it('should return an array of 2 objects containing parsing result', () => {
             expect(parsing).to.be.an('array');
-        });
-
-        it('should return an array of two objects', function () {
             expect(parsing).to.have.lengthOf(2);
             expect(parsing[0]).to.be.an('object');
+            expect(parsing[0]).to.deep.equal({
+                binder: 'text',
+                value: 'user.name'
+            });
             expect(parsing[1]).to.be.an('object');
+            expect(parsing[1]).to.deep.equal({
+                binder: 'model',
+                value: 'user.city'
+            });
         });
     });
 
-    describe('parseKeypath', function () {
+    describe('parseKeypath', () => {
         const keypath = 'user.city';
         const target = {
             user: {
@@ -55,13 +60,69 @@ describe('Parser', function () {
             target
         });
 
-        it('should return an object', function () {
+        it('should return an object containing 3 properties', () => {
             expect(parsing).to.be.an('object');
+            expect(Object.keys(parsing)).to.have.lengthOf(3);
             expect(parsing).to.have.property('key', 'city');
             expect(parsing).to.have.deep.property('obj', {
                 city: 'Berlin'
             });
             expect(parsing).to.have.property('val', 'Berlin');
+        });
+    });
+
+    describe('parseNode', () => {
+        describe('Parsing element node', () => {
+            const node = {
+                nodeType: 1,
+                attributes: [{
+                    name: 'bd-text',
+                    value: 'user.name'
+                }]
+            };
+            const parsing = parser.parseNode(node);
+
+            it('should return an array of 1 element containing parsing result', () => {
+                expect(parsing).to.be.an('array');
+                expect(parsing).to.have.lengthOf(1);
+                expect(parsing[0]).to.deep.equal({
+                    binder: 'text',
+                    value: 'user.name'
+                });
+            });
+        });
+
+        describe('Parsing text node', () => {
+            const node = {
+                nodeType: 3,
+                textContent: '{{user.city}}'
+            };
+            const parsing = parser.parseNode(node);
+
+            it('should return an array of 1 element containing parsing result', () => {
+                expect(parsing).to.be.an('array');
+                expect(parsing).to.have.lengthOf(1);
+                expect(parsing[0]).to.deep.equal({
+                    binder: 'text',
+                    value: 'user.city'
+                });
+            });
+        });
+    });
+
+    describe('parseTextNode', () => {
+        const textContent = '{{foo.bar}}';
+        const regExp = new RegExp(/{{(.*?)}}/);
+        const parsing = parser.parseTextNode(textContent, regExp);
+
+        it('should return an array of 1 object containing parsing result', () => {
+            expect(parsing).to.be.an('array');
+            expect(parsing).to.have.lengthOf(1);
+            expect(parsing[0]).to.be.an('object');
+            expect(parsing[0]).to.deep.equal({
+                binder: 'text',
+                value: 'foo.bar'
+            });
         });
     });
 });
