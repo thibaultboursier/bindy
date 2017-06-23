@@ -75,35 +75,42 @@ return /******/ (function(modules) { // webpackBootstrap
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-const configuration = __webpack_require__(6);
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+
+var configuration = __webpack_require__(6);
 
 /**
  * Get attribute RegExp.
  * @return {String}
  */
-const getAttributeRegExp = function getAttributeRegExp() {
-    const {
-        prefix
-    } = configuration;
+var getAttributeRegExp = function getAttributeRegExp() {
+    var prefix = configuration.prefix;
 
-    return new RegExp(`${prefix}-`);
+
+    return new RegExp(prefix + '-');
 };
 
 /**
  * Get interpolation RegExp.
  * @return {Object}
  */
-const getInterpolationRegExp = function getInterpolationRegExp() {
-    const {
-        delimiters
-    } = configuration;
-    const [start, end] = delimiters;
+var getInterpolationRegExp = function getInterpolationRegExp() {
+    var delimiters = configuration.delimiters;
 
-    return new RegExp(`${start}(.*?)${end}`);
+    var _delimiters = _slicedToArray(delimiters, 2),
+        start = _delimiters[0],
+        end = _delimiters[1];
+
+    return new RegExp(start + '(.*?)' + end);
 };
 
 /**
@@ -111,43 +118,39 @@ const getInterpolationRegExp = function getInterpolationRegExp() {
  * @param {String} attributes - Node attributes.
  * @param {String} regExp - Regular expression.
  */
-const parseAttributes = function parseAttributes(attributes, regExp) {
-    return Array.from(attributes)
-        .filter(({
-            name
-        }) => regExp.test(name))
-        .map(({
-            value,
-            name
-        }) => {
-            const binder = name.replace(regExp, '');
+var parseAttributes = exports.parseAttributes = function parseAttributes(attributes, regExp) {
+    return Array.from(attributes).filter(function (_ref) {
+        var name = _ref.name;
+        return regExp.test(name);
+    }).map(function (_ref2) {
+        var value = _ref2.value,
+            name = _ref2.name;
 
-            return {
-                binder,
-                value
-            }
-        });
-}
-/* harmony export (immutable) */ __webpack_exports__["parseAttributes"] = parseAttributes;
+        var binder = name.replace(regExp, '');
 
+        return {
+            binder: binder,
+            value: value
+        };
+    });
+};
 
 /**
  * Parse keypath.
  * @param {Object}
  * @return {Object}
  */
-const parseKeypath = function parseKeypath({
-    keypath,
-    target
-}) {
-    const keys = keypath.split('.');
-    const {
-        length
-    } = keys;
-    let obj;
-    let key;
+var parseKeypath = exports.parseKeypath = function parseKeypath(_ref3) {
+    var keypath = _ref3.keypath,
+        target = _ref3.target;
 
-    const val = keys.reduce((prev, curr, index) => {
+    var keys = keypath.split('.');
+    var length = keys.length;
+
+    var obj = void 0;
+    var key = void 0;
+
+    var val = keys.reduce(function (prev, curr, index) {
         switch (index) {
             case length - 1:
                 key = curr;
@@ -163,27 +166,24 @@ const parseKeypath = function parseKeypath({
     obj = obj || target;
 
     return {
-        obj,
-        key,
-        val
+        obj: obj,
+        key: key,
+        val: val
     };
 };
-/* harmony export (immutable) */ __webpack_exports__["parseKeypath"] = parseKeypath;
-
 
 /**
  * Parse node.
  * @param {Object} node - Node. 
  * @return {Object}
  */
-const parseNode = function parseNode(node) {
-    const {
-        attributes,
-        childNodes,
-        nodeType,
-        textContent
-    } = node;
-    let regExp;
+var parseNode = exports.parseNode = function parseNode(node) {
+    var attributes = node.attributes,
+        childNodes = node.childNodes,
+        nodeType = node.nodeType,
+        textContent = node.textContent;
+
+    var regExp = void 0;
 
     switch (nodeType) {
         case 1:
@@ -193,66 +193,86 @@ const parseNode = function parseNode(node) {
             regExp = getInterpolationRegExp();
             return parseTextNode(textContent, regExp);
     }
-}
-/* harmony export (immutable) */ __webpack_exports__["parseNode"] = parseNode;
-
+};
 
 /**
  * Parse text node to find expressions.
  * @param {String} textContent - Node text content.
  * @param {String} regExp - Regular expression.
  */
-const parseTextNode = function parseTextNode(textContent, regExp) {
-    const binder = 'text';
+var parseTextNode = exports.parseTextNode = function parseTextNode(textContent, regExp) {
+    var binder = 'text';
 
     if (regExp.test(textContent)) {
-        const value = textContent.trim().match(regExp)[1];
+        var value = textContent.trim().match(regExp)[1];
 
         return [{
-            binder,
-            value
+            binder: binder,
+            value: value
         }];
     }
-}
-/* harmony export (immutable) */ __webpack_exports__["parseTextNode"] = parseTextNode;
-
+};
 
 /***/ }),
 /* 1 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
 /**
  * Error handler.
  * @param {String} message - Message to print.
  */
-const error = function error(message) {
-    throw new Error(`[bindy] ${message}`);
+var error = exports.error = function error(message) {
+  throw new Error("[bindy] " + message);
 };
-/* harmony export (immutable) */ __webpack_exports__["error"] = error;
-
 
 /***/ }),
 /* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const {
-    View
-} = __webpack_require__(3);
+__webpack_require__(3);
+(function webpackMissingModule() { throw new Error("Cannot find module \"test\""); }());
+
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var _require = __webpack_require__(4),
+    View = _require.View;
 
 /**
  * Class representing a bindy.
  */
-class Bindy {}
+
+
+var Bindy = function Bindy() {
+    _classCallCheck(this, Bindy);
+};
 
 /**
  * Bind.
  * @public
  * @static
  */
-Bindy.bind = (...args) => {
-    const view = new View(...args);
+
+
+Bindy.bind = function () {
+    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+        args[_key] = arguments[_key];
+    }
+
+    var view = new (Function.prototype.bind.apply(View, [null].concat(args)))();
 
     view.init();
 
@@ -262,28 +282,40 @@ Bindy.bind = (...args) => {
 module.exports = Bindy;
 
 /***/ }),
-/* 3 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-const {
-    Binding
-} = __webpack_require__(4);
-const utils = __webpack_require__(1);
-const binders = __webpack_require__(5);
-const parser = __webpack_require__(0);
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var _require = __webpack_require__(5),
+    Binding = _require.Binding;
+
+var utils = __webpack_require__(1);
+var binders = __webpack_require__(7);
+var parser = __webpack_require__(0);
 
 /**
  * Class representing a view.
  */
-class View {
+
+var View = exports.View = function () {
     /**
      * Create a view.
      * @param {Object} target - Target.
      * @param {HTMLElement} DOM - DOM. 
      */
-    constructor(target, DOM) {
+    function View(target, DOM) {
+        _classCallCheck(this, View);
+
         if (!target) {
             utils.error('You must provide an object for binding.');
         }
@@ -304,137 +336,178 @@ class View {
      * @param {Function} fn - Binder's function.
      * @return {Object}
      */
-    addBinder(key, fn) {
-        if (binders.hasOwnProperty(key)) {
-            error(`Binding (${key}) is already registered.`);
+
+
+    _createClass(View, [{
+        key: 'addBinder',
+        value: function addBinder(key, fn) {
+            if (binders.hasOwnProperty(key)) {
+                error('Binding (' + key + ') is already registered.');
+            }
+
+            this.binders[key] = fn;
+
+            return this;
         }
 
-        this.binders[key] = fn;
+        /**
+         * Initialize view.
+         */
 
-        return this;
-    }
-
-    /**
-     * Initialize view.
-     */
-    init() {
-        // DOM is parsed to look for bindings.
-        this.traverseDOM();
-        // Each binding is initialized.
-        this.bindings.forEach(binding => binding.bind());
-    }
-
-    /**
-     * Get child nodes.
-     * @param {Object} node - Node.
-     */
-    getChildNodes(node, callback) {
-        const {
-            childNodes
-        } = node;
-
-        if (typeof callback === 'function') {
-            callback.call(this, node);
+    }, {
+        key: 'init',
+        value: function init() {
+            // DOM is parsed to look for bindings.
+            this.traverseDOM();
+            // Each binding is initialized.
+            this.bindings.forEach(function (binding) {
+                return binding.bind();
+            });
         }
 
-        // Call recursively getChildNodes method.
-        if (childNodes) {
-            Array.from(childNodes).forEach(childNode => this.getChildNodes(childNode, callback));
+        /**
+         * Get child nodes.
+         * @param {Object} node - Node.
+         */
+
+    }, {
+        key: 'getChildNodes',
+        value: function getChildNodes(node, callback) {
+            var _this = this;
+
+            var childNodes = node.childNodes;
+
+
+            if (typeof callback === 'function') {
+                callback.call(this, node);
+            }
+
+            // Call recursively getChildNodes method.
+            if (childNodes) {
+                Array.from(childNodes).forEach(function (childNode) {
+                    return _this.getChildNodes(childNode, callback);
+                });
+            }
         }
-    }
 
-    /**
-     * Refresh.
-     */
-    refresh() {
-        this.bindings.length = 0;
+        /**
+         * Refresh.
+         */
 
-        return this.init();
-    }
+    }, {
+        key: 'refresh',
+        value: function refresh() {
+            this.bindings.length = 0;
 
-    /**
-     * Register new binding.
-     * @param {Object}
-     * @return {Object}
-     */
-    register({
-        el,
-        keypath,
-        type
-    }) {
-        const {
-            DOM,
-            target
-        } = this;
-        const binding = new Binding({
-            DOM,
-            el,
-            keypath,
-            target,
-            type
-        });
+            return this.init();
+        }
 
-        this.bindings.push(binding);
+        /**
+         * Register new binding.
+         * @param {Object}
+         * @return {Object}
+         */
 
-        return binding;
-    }
+    }, {
+        key: 'register',
+        value: function register(_ref) {
+            var el = _ref.el,
+                keypath = _ref.keypath,
+                type = _ref.type;
+            var DOM = this.DOM,
+                target = this.target;
 
-    /**
-     * For-loop on each DOM node to look for bindings.
-     * @return {Object}
-     */
-    traverseDOM() {
-        this.getChildNodes(this.DOM, node => {
-            const parsing = parser.parseNode(node);
+            var binding = new Binding({
+                DOM: DOM,
+                el: el,
+                keypath: keypath,
+                target: target,
+                type: type
+            });
 
-            // For each parsing result, binder is called.
-            parsing && parsing.forEach(({
-                binder,
-                value
-            }) => this.binders[binder].call(this, node, value));
-        });
+            this.bindings.push(binding);
 
-        return this;
-    }
+            return binding;
+        }
 
-    /**
-     * Update bindings.
-     * @param {Object}
-     */
-    update() {}
-}
-/* harmony export (immutable) */ __webpack_exports__["View"] = View;
+        /**
+         * For-loop on each DOM node to look for bindings.
+         * @return {Object}
+         */
 
+    }, {
+        key: 'traverseDOM',
+        value: function traverseDOM() {
+            var _this2 = this;
+
+            this.getChildNodes(this.DOM, function (node) {
+                var parsing = parser.parseNode(node);
+
+                // For each parsing result, binder is called.
+                parsing && parsing.forEach(function (_ref2) {
+                    var binder = _ref2.binder,
+                        value = _ref2.value;
+                    return _this2.binders[binder].call(_this2, node, value);
+                });
+            });
+
+            return this;
+        }
+
+        /**
+         * Update bindings.
+         * @param {Object}
+         */
+
+    }, {
+        key: 'update',
+        value: function update() {}
+    }]);
+
+    return View;
+}();
 
 /***/ }),
-/* 4 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-const parser = __webpack_require__(0);
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var parser = __webpack_require__(0);
 
 /**
  * Class representing a binding.
  */
-class Binding {
+
+var Binding = exports.Binding = function () {
     /**
      * Create a binding.
      * @param {Object}
      */
-    constructor({
-        DOM,
-        el,
-        keypath,
-        target,
-        type
-    }) {
+    function Binding(_ref) {
+        var DOM = _ref.DOM,
+            el = _ref.el,
+            keypath = _ref.keypath,
+            target = _ref.target,
+            type = _ref.type;
+
+        _classCallCheck(this, Binding);
+
         Object.assign(this, {
-            DOM,
-            el,
-            keypath,
-            target,
-            type
+            DOM: DOM,
+            el: el,
+            keypath: keypath,
+            target: target,
+            type: type
         });
     }
 
@@ -442,146 +515,184 @@ class Binding {
      * Initialize binding.
      * @return {Object}
      */
-    bind() {
-        const {
-            type
-        } = this;
 
-        this.parseKeypath()
 
-        switch (type) {
-            case 'property':
-                return this.bindProperty();
-            case 'event':
-                return this.bindEvent();
-        }
-    }
+    _createClass(Binding, [{
+        key: 'bind',
+        value: function bind() {
+            var type = this.type;
 
-    /**
-     * Bind event.
-     */
-    bindEvent() {
-        const {
-            el,
-            key,
-            keypath,
-            obj,
-            target,
-            val
-        } = this;
-        const handler = (event) => {
-            const value = event.target.value;
 
-            obj[key] = value;
+            this.parseKeypath();
+
+            switch (type) {
+                case 'property':
+                    return this.bindProperty();
+                case 'event':
+                    return this.bindEvent();
+            }
         }
 
-        el.addEventListener('keyup', handler);
-        el.addEventListener('keydown', handler);
-        el.addEventListener('change', handler);
+        /**
+         * Bind event.
+         */
 
-        return this;
-    }
+    }, {
+        key: 'bindEvent',
+        value: function bindEvent() {
+            var el = this.el,
+                key = this.key,
+                keypath = this.keypath,
+                obj = this.obj,
+                target = this.target,
+                val = this.val;
 
-    /**
-     * Bind property.
-     */
-    bindProperty() {
-        const {
-            key,
-            keypath,
-            obj,
-            target,
-            val
-        } = this;
+            var handler = function handler(event) {
+                var value = event.target.value;
 
-        // Binding's value is rendered if it's defined.
-        if (val) {
-            this.render(val);
+                obj[key] = value;
+            };
+
+            el.addEventListener('keyup', handler);
+            el.addEventListener('keydown', handler);
+            el.addEventListener('change', handler);
+
+            return this;
         }
 
-        if (obj.hasOwnProperty(key)) {
-            Object.defineProperty(obj, key, {
-                enumerable: true,
-                set: (newVal) => this.update(newVal)
-            })
-        };
+        /**
+         * Bind property.
+         */
 
-        return this;
-    }
+    }, {
+        key: 'bindProperty',
+        value: function bindProperty() {
+            var _this = this;
 
-    /**
-     * Broadcast event.
-     */
-    emit() {
-        const updateEvent = new CustomEvent('update', {
-            detail: {}
-        });
+            var key = this.key,
+                keypath = this.keypath,
+                obj = this.obj,
+                target = this.target,
+                val = this.val;
 
-        this.DOM.dispatchEvent(updateEvent);
-    }
+            // Binding's value is rendered if it's defined.
 
-    /**
-     * Parse binding's keypath.
-     * @return {Object}
-     */
-    parseKeypath() {
-        const {
-            keypath,
-            target
-        } = this;
-        const parsing = parser.parseKeypath({
-            keypath,
-            target
-        });
+            if (val) {
+                this.render(val);
+            }
 
-        // Parsing result is assigned to binding instance
-        Object.assign(this, parsing);
+            if (obj.hasOwnProperty(key)) {
+                Object.defineProperty(obj, key, {
+                    enumerable: true,
+                    set: function set(newVal) {
+                        return _this.update(newVal);
+                    }
+                });
+            };
 
-        return this;
-    }
-
-    /**
-     * Update binding's output.
-     * @param {*} val - Binding's value.
-     * @return {Object}
-     */
-    render(val = this.val) {
-        const {
-            nodeType
-        } = this.el;
-
-        switch (nodeType) {
-            case 1:
-                this.el.innerText = val;
-                break;
-            case 3:
-                this.el.textContent = val;
+            return this;
         }
 
-        return this;
-    }
+        /**
+         * Broadcast event.
+         */
 
-    /**
-     * Update binding's output.
-     * @param {*} newVal - Binding's new value.
-     * @return {Object}
-     */
-    update(newVal) {
-        this.val = newVal;
+    }, {
+        key: 'emit',
+        value: function emit() {
+            var updateEvent = new CustomEvent('update', {
+                detail: {}
+            });
 
-        this.render();
+            this.DOM.dispatchEvent(updateEvent);
+        }
 
-        return this;
-    }
-}
-/* harmony export (immutable) */ __webpack_exports__["Binding"] = Binding;
+        /**
+         * Parse binding's keypath.
+         * @return {Object}
+         */
 
+    }, {
+        key: 'parseKeypath',
+        value: function parseKeypath() {
+            var keypath = this.keypath,
+                target = this.target;
+
+            var parsing = parser.parseKeypath({
+                keypath: keypath,
+                target: target
+            });
+
+            // Parsing result is assigned to binding instance
+            Object.assign(this, parsing);
+
+            return this;
+        }
+
+        /**
+         * Update binding's output.
+         * @param {*} val - Binding's value.
+         * @return {Object}
+         */
+
+    }, {
+        key: 'render',
+        value: function render() {
+            var val = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.val;
+            var nodeType = this.el.nodeType;
+
+
+            switch (nodeType) {
+                case 1:
+                    this.el.innerText = val;
+                    break;
+                case 3:
+                    this.el.textContent = val;
+            }
+
+            return this;
+        }
+
+        /**
+         * Update binding's output.
+         * @param {*} newVal - Binding's new value.
+         * @return {Object}
+         */
+
+    }, {
+        key: 'update',
+        value: function update(newVal) {
+            this.val = newVal;
+
+            this.render();
+
+            return this;
+        }
+    }]);
+
+    return Binding;
+}();
 
 /***/ }),
-/* 5 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const utils = __webpack_require__(1);
+"use strict";
+
+
+module.exports = {
+    delimiters: ['{{', '}}'],
+    prefix: 'bd'
+};
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var utils = __webpack_require__(1);
 
 module.exports = {
     /**
@@ -589,38 +700,30 @@ module.exports = {
      * @param {HTMLElement} el - HTML element. 
      * @param {String} value - Value.
      */
-    text(el, value) {
-        const type = 'property';
+    text: function text(el, value) {
+        var type = 'property';
 
         this.register({
-            el,
+            el: el,
             keypath: value,
-            type
+            type: type
         });
     },
+
     /**
      * Model binder.
      * @param {HTMLElement} el - HTML element. 
      * @param {String} value - Value.
      */
-    model(el, value) {
-        const type = 'event';
+    model: function model(el, value) {
+        var type = 'event';
 
         this.register({
-            el,
+            el: el,
             keypath: value,
-            type
+            type: type
         });
     }
-};
-
-/***/ }),
-/* 6 */
-/***/ (function(module, exports) {
-
-module.exports = {
-    delimiters: ['{{', '}}'],
-    prefix: 'bd'
 };
 
 /***/ })

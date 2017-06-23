@@ -4,7 +4,7 @@ const configuration = require('./configuration');
  * Get attribute RegExp.
  * @return {String}
  */
-const getAttributeRegExp = function getAttributeRegExp() {
+export const getAttributeRegExp = function getAttributeRegExp() {
     const {
         prefix
     } = configuration;
@@ -16,7 +16,7 @@ const getAttributeRegExp = function getAttributeRegExp() {
  * Get interpolation RegExp.
  * @return {Object}
  */
-const getInterpolationRegExp = function getInterpolationRegExp() {
+export const getInterpolationRegExp = function getInterpolationRegExp() {
     const {
         delimiters
     } = configuration;
@@ -80,8 +80,8 @@ export const parseKeypath = function parseKeypath({
     obj = obj || target;
 
     return {
-        obj,
         key,
+        obj,
         val
     };
 };
