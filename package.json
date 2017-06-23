@@ -2,9 +2,10 @@
   "name": "bindy",
   "version": "0.0.1",
   "description": "simple databinding library",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
-    "test": "mocha --compilers js:babel-core/register ./test/**/*.spec.js -w"
+    "test": "mocha --compilers js:babel-core/register ./test/**/*.spec.js",
+    "test-watch": "mocha --compilers js:babel-core/register ./test/**/*.spec.js -w"
   },
   "repository": {
     "type": "git",
