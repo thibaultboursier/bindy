@@ -3,28 +3,28 @@ const utils = require('./utils');
 module.exports = {
     /**
      * Text binder.
-     * @param {HTMLElement} el - HTML element. 
+     * @param {Object} node - Node. 
      * @param {String} value - Value.
      */
-    text(el, value) {
+    text(node, value) {
         const type = 'property';
 
         this.register({
-            el,
+            node,
             keypath: value,
             type
         });
     },
     /**
      * Model binder.
-     * @param {HTMLElement} el - HTML element. 
+     * @param {Object} node - Node. 
      * @param {String} value - Value.
      */
-    model(el, value) {
+    model(node, value) {
         const type = 'event';
 
         this.register({
-            el,
+            node,
             keypath: value,
             type
         });

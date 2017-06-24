@@ -5,7 +5,7 @@ const parser = require('../src/parser');
 
 describe('Parser', () => {
 
-    describe('getAttributeRegExp', () => {
+    describe('#getAttributeRegExp()', () => {
         it('should return a regular expression', () => {
             const regExp = parser.getAttributeRegExp();
 
@@ -13,7 +13,7 @@ describe('Parser', () => {
         });
     });
 
-    describe('getInterpolationRegExp', () => {
+    describe('#getInterpolationRegExp()', () => {
         it('should return a regular expression', () => {
             const regExp = parser.getInterpolationRegExp();
 
@@ -21,7 +21,7 @@ describe('Parser', () => {
         });
     });
 
-    describe('parseAttributes', () => {
+    describe('#parseAttributes()', () => {
         const attributes = [{
             name: 'bd-text',
             value: 'user.name'
@@ -48,7 +48,7 @@ describe('Parser', () => {
         });
     });
 
-    describe('parseKeypath', () => {
+    describe('#parseKeypath()', () => {
         const keypath = 'user.city';
         const target = {
             user: {
@@ -71,7 +71,7 @@ describe('Parser', () => {
         });
     });
 
-    describe('parseNode', () => {
+    describe('#parseNode()', () => {
         describe('Parsing element node', () => {
             const node = {
                 nodeType: 1,
@@ -110,7 +110,7 @@ describe('Parser', () => {
         });
     });
 
-    describe('parseTextNode', () => {
+    describe('#parseTextNode()', () => {
         const textContent = '{{foo.bar}}';
         const regExp = new RegExp(/{{(.*?)}}/);
         const parsing = parser.parseTextNode(textContent, regExp);

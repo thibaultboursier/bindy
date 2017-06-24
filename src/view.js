@@ -89,7 +89,7 @@ export class View {
      * @return {Object}
      */
     register({
-        el,
+        node,
         keypath,
         type
     }) {
@@ -99,7 +99,7 @@ export class View {
         } = this;
         const binding = new Binding({
             DOM,
-            el,
+            node,
             keypath,
             target,
             type

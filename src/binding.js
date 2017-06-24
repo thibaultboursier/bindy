@@ -10,14 +10,14 @@ export class Binding {
      */
     constructor({
         DOM,
-        el,
+        node,
         keypath,
         target,
         type
     }) {
         Object.assign(this, {
             DOM,
-            el,
+            node,
             keypath,
             target,
             type
@@ -33,7 +33,7 @@ export class Binding {
             type
         } = this;
 
-        this.parseKeypath()
+        this.parseKeypath();
 
         switch (type) {
             case 'property':
@@ -48,7 +48,7 @@ export class Binding {
      */
     bindEvent() {
         const {
-            el,
+            node,
             key,
             keypath,
             obj,
@@ -61,9 +61,9 @@ export class Binding {
             obj[key] = value;
         }
 
-        el.addEventListener('keyup', handler);
-        el.addEventListener('keydown', handler);
-        el.addEventListener('change', handler);
+        node.addEventListener('keyup', handler);
+        node.addEventListener('keydown', handler);
+        node.addEventListener('change', handler);
 
         return this;
     }
@@ -134,14 +134,14 @@ export class Binding {
     render(val = this.val) {
         const {
             nodeType
-        } = this.el;
+        } = this.node;
 
         switch (nodeType) {
             case 1:
-                this.el.innerText = val;
+                this.node.innerText = val;
                 break;
             case 3:
-                this.el.textContent = val;
+                this.node.textContent = val;
         }
 
         return this;

@@ -86,13 +86,13 @@ Object.defineProperty(exports, "__esModule", {
 
 var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
-var configuration = __webpack_require__(6);
+var configuration = __webpack_require__(5);
 
 /**
  * Get attribute RegExp.
  * @return {String}
  */
-var getAttributeRegExp = function getAttributeRegExp() {
+var getAttributeRegExp = exports.getAttributeRegExp = function getAttributeRegExp() {
     var prefix = configuration.prefix;
 
 
@@ -103,7 +103,7 @@ var getAttributeRegExp = function getAttributeRegExp() {
  * Get interpolation RegExp.
  * @return {Object}
  */
-var getInterpolationRegExp = function getInterpolationRegExp() {
+var getInterpolationRegExp = exports.getInterpolationRegExp = function getInterpolationRegExp() {
     var delimiters = configuration.delimiters;
 
     var _delimiters = _slicedToArray(delimiters, 2),
@@ -166,8 +166,8 @@ var parseKeypath = exports.parseKeypath = function parseKeypath(_ref3) {
     obj = obj || target;
 
     return {
-        obj: obj,
         key: key,
+        obj: obj,
         val: val
     };
 };
@@ -235,20 +235,12 @@ var error = exports.error = function error(message) {
 /* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(3);
-(function webpackMissingModule() { throw new Error("Cannot find module \"test\""); }());
-
-
-/***/ }),
-/* 3 */
-/***/ (function(module, exports, __webpack_require__) {
-
 "use strict";
 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var _require = __webpack_require__(4),
+var _require = __webpack_require__(3),
     View = _require.View;
 
 /**
@@ -282,7 +274,7 @@ Bindy.bind = function () {
 module.exports = Bindy;
 
 /***/ }),
-/* 4 */
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -296,11 +288,11 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var _require = __webpack_require__(5),
+var _require = __webpack_require__(4),
     Binding = _require.Binding;
 
 var utils = __webpack_require__(1);
-var binders = __webpack_require__(7);
+var binders = __webpack_require__(6);
 var parser = __webpack_require__(0);
 
 /**
@@ -411,7 +403,7 @@ var View = exports.View = function () {
     }, {
         key: 'register',
         value: function register(_ref) {
-            var el = _ref.el,
+            var node = _ref.node,
                 keypath = _ref.keypath,
                 type = _ref.type;
             var DOM = this.DOM,
@@ -419,7 +411,7 @@ var View = exports.View = function () {
 
             var binding = new Binding({
                 DOM: DOM,
-                el: el,
+                node: node,
                 keypath: keypath,
                 target: target,
                 type: type
@@ -468,7 +460,7 @@ var View = exports.View = function () {
 }();
 
 /***/ }),
-/* 5 */
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -495,7 +487,7 @@ var Binding = exports.Binding = function () {
      */
     function Binding(_ref) {
         var DOM = _ref.DOM,
-            el = _ref.el,
+            node = _ref.node,
             keypath = _ref.keypath,
             target = _ref.target,
             type = _ref.type;
@@ -504,7 +496,7 @@ var Binding = exports.Binding = function () {
 
         Object.assign(this, {
             DOM: DOM,
-            el: el,
+            node: node,
             keypath: keypath,
             target: target,
             type: type
@@ -540,7 +532,7 @@ var Binding = exports.Binding = function () {
     }, {
         key: 'bindEvent',
         value: function bindEvent() {
-            var el = this.el,
+            var node = this.node,
                 key = this.key,
                 keypath = this.keypath,
                 obj = this.obj,
@@ -553,9 +545,9 @@ var Binding = exports.Binding = function () {
                 obj[key] = value;
             };
 
-            el.addEventListener('keyup', handler);
-            el.addEventListener('keydown', handler);
-            el.addEventListener('change', handler);
+            node.addEventListener('keyup', handler);
+            node.addEventListener('keydown', handler);
+            node.addEventListener('change', handler);
 
             return this;
         }
@@ -639,15 +631,15 @@ var Binding = exports.Binding = function () {
         key: 'render',
         value: function render() {
             var val = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.val;
-            var nodeType = this.el.nodeType;
+            var nodeType = this.node.nodeType;
 
 
             switch (nodeType) {
                 case 1:
-                    this.el.innerText = val;
+                    this.node.innerText = val;
                     break;
                 case 3:
-                    this.el.textContent = val;
+                    this.node.textContent = val;
             }
 
             return this;
@@ -674,7 +666,7 @@ var Binding = exports.Binding = function () {
 }();
 
 /***/ }),
-/* 6 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -686,7 +678,7 @@ module.exports = {
 };
 
 /***/ }),
-/* 7 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -697,14 +689,14 @@ var utils = __webpack_require__(1);
 module.exports = {
     /**
      * Text binder.
-     * @param {HTMLElement} el - HTML element. 
+     * @param {Object} node - Node. 
      * @param {String} value - Value.
      */
-    text: function text(el, value) {
+    text: function text(node, value) {
         var type = 'property';
 
         this.register({
-            el: el,
+            node: node,
             keypath: value,
             type: type
         });
@@ -712,14 +704,14 @@ module.exports = {
 
     /**
      * Model binder.
-     * @param {HTMLElement} el - HTML element. 
+     * @param {Object} node - Node. 
      * @param {String} value - Value.
      */
-    model: function model(el, value) {
+    model: function model(node, value) {
         var type = 'event';
 
         this.register({
-            el: el,
+            node: node,
             keypath: value,
             type: type
         });
