@@ -1,5 +1,5 @@
 export const propertyBinding = {
-    keypath: 'user.private.password',
+    keypath: 'user.password',
     type: 'property',
     target: {
         user: {

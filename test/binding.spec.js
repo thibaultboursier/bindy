@@ -16,12 +16,13 @@ describe('Binding', () => {
         target,
         type
     });
-    binding.obj = 'private';
+    binding.obj = 'user';
 
     describe('#bind()', () => {
 
         it('should call keypath parsing', () => {
             const stub = sinon.stub(binding, 'parseKeypath');
+
             binding.bind();
             expect(binding.parseKeypath.called).to.equal(true);
             stub.restore();            
@@ -29,9 +30,20 @@ describe('Binding', () => {
 
         it('should call property binding', () => {
             const stub = sinon.stub(binding, 'bindProperty');
+
             binding.bind();
             expect(binding.bindProperty.called).to.equal(true);  
             stub.restore();                      
+        });
+
+        it('should init property binding with DOM rendering', () => {
+            target.user.password = 'J921KDMN';
+            binding.bind();
+            expect(node.innerText).to.equal('J921KDMN');
+        });
+
+        it('should init event binding with object refreshing', () => {
+            // TODO event binding
         });
     });
 
