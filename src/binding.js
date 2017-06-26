@@ -84,7 +84,7 @@ export class Binding {
         if (val) {
             this.render(val);
         }
-
+        
         if (obj.hasOwnProperty(key)) {
             Object.defineProperty(obj, key, {
                 enumerable: true,

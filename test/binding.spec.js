@@ -1,44 +1,43 @@
 const { expect } = require('chai');
-const { JSDOM } = require('jsdom');
 const sinon = require('sinon');
 
 const { Binding } = require('../src/binding');
-const { propertyBinding } = require('./mock/default.mock');
+const mock = require('./mock/default.mock');
 
 describe('Binding', () => {
-    const { keypath, target, type } = propertyBinding;
-    const DOM = new JSDOM(propertyBinding.DOM).window.document.querySelector('#container');
-    const node = DOM.querySelector('p');
-    const binding = new Binding({
-        DOM,
-        node,
-        keypath,
-        target,
-        type
+    let propertyBinding;
+    let eventBinding;
+
+    beforeEach(() => {
+        propertyBinding = new Binding(mock.propertyBinding);
+        eventBinding = new Binding(mock.eventBinding);
+        
+        propertyBinding.obj = eventBinding.obj = 'user';
     });
-    binding.obj = 'user';
 
     describe('#bind()', () => {
 
         it('should call keypath parsing', () => {
-            const stub = sinon.stub(binding, 'parseKeypath');
+            const stub = sinon.stub(propertyBinding, 'parseKeypath');
 
-            binding.bind();
-            expect(binding.parseKeypath.called).to.equal(true);
+            propertyBinding.bind();
+            expect(propertyBinding.parseKeypath.called).to.equal(true);
             stub.restore();            
         });
 
         it('should call property binding', () => {
-            const stub = sinon.stub(binding, 'bindProperty');
+            const stub = sinon.stub(propertyBinding, 'bindProperty');
 
-            binding.bind();
-            expect(binding.bindProperty.called).to.equal(true);  
+            propertyBinding.bind();
+            expect(propertyBinding.bindProperty.called).to.equal(true);  
             stub.restore();                      
         });
 
         it('should init property binding with DOM rendering', () => {
+            const {node, target} = propertyBinding;
+            
             target.user.password = 'J921KDMN';
-            binding.bind();
+            propertyBinding.bind();
             expect(node.innerText).to.equal('J921KDMN');
         });
 
@@ -50,8 +49,10 @@ describe('Binding', () => {
     describe('#bindProperty', () => {
 
         it('should add a setter on property', () => {
-            binding.bindProperty();
-            expect(binding.obj).ownPropertyDescriptor(binding.key).to.have.property('set');
+            const {key, obj} = propertyBinding;
+
+            propertyBinding.bindProperty();
+           // expect(obj).ownPropertyDescriptor(key).to.have.property('set');
         })
     });
 });
