@@ -6,18 +6,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Document</title>
-  <script src="../dist/bindy.js" defer></script>
-  <script defer>
-    let target = {
-      user: {
-        name: 'Peter',
-        city: 'Dublin'
-      }
-    };
-
-    const container = document.querySelector('#container');
-    const view = Bindy.bind(target, container);
-  </script>
 </head>
 
 <body>
@@ -31,7 +19,19 @@
       <input type="text" bd-model="user.city" placeholder="Change city value">
     </p>
   </div>
+  
+  <script src="../dist/bindy.js"></script>
+  <script>
+    let target = {
+      user: {
+        name: 'Peter',
+        city: 'Dublin'
+      }
+    };
 
+    const container = document.querySelector('#container');
+    const view = Bindy.bind(target, container);
+  </script>
 </body>
 
 </html>
