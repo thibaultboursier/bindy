@@ -7,6 +7,17 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Document</title>
   <script src="../dist/bindy.js" defer></script>
+  <script defer>
+    let target = {
+      user: {
+        name: 'Peter',
+        city: 'Dublin'
+      }
+    };
+
+    const container = document.querySelector('#container');
+    const view = Bindy.bind(target, container);
+  </script>
 </head>
 
 <body>
@@ -17,7 +28,7 @@
       Your city is <span bd-text="user.city"></span>
     </p>
     <p>
-      <input type="text" bd-model="user.city">
+      <input type="text" bd-model="user.city" placeholder="Change city value">
     </p>
   </div>
 
