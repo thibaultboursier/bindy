@@ -1,4 +1,5 @@
 const parser = require('./parser');
+const utils = require('./utils');
 
 /**
  * Class representing a binding.
@@ -84,7 +85,11 @@ export class Binding {
         if (val) {
             this.render(val);
         }
-        
+
+        if (!obj) {
+            utils.error('Binding\'s object is not defined');
+        }
+
         if (obj.hasOwnProperty(key)) {
             Object.defineProperty(obj, key, {
                 enumerable: true,

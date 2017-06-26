@@ -26,8 +26,8 @@ export const propertyBinding = {
 };
 export const eventBinding = {
     DOM,
-    keypath: 'user.name',
-    node: DOM.querySelector('#userName'),
+    keypath: 'user.city',
+    node: DOM.querySelector('#userCity'),
     target,
     type: 'event'
 };
