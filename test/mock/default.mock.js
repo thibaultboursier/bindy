@@ -9,7 +9,8 @@ export const template = `
             <p id="userName">{{ user.name }}</p>
         </div>
     `;
-export const DOM = new JSDOM(template).window.document.querySelector('#container');
+export const window = new JSDOM(template).window;
+export const DOM = window.document.querySelector('#container');
 export const target = {
     user: {
         name: 'john',

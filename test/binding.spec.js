@@ -47,15 +47,26 @@ describe('Binding', () => {
             expect(node.innerText).to.equal('J921KDMN');
         });
 
-        it('should init event binding with object refreshing', () => {
+        it('should init event binding with object refreshing when value changes', () => {
             const {
                 node,
                 target
             } = eventBinding;
+            const {
+                window
+            } = mock;
+            const event = new window.Event('change');
 
             eventBinding.bind();
+
+            const {
+                obj,
+                key
+            } = eventBinding;
             node.value = 'Roma';
-            // TODO : trigger change on input
+            node.dispatchEvent(event);
+            expect(eventBinding.val).to.equal('Roma');
+            expect(obj[key]).to.equal('Roma');
         });
     });
 
@@ -67,7 +78,7 @@ describe('Binding', () => {
             } = propertyBinding;
 
             propertyBinding.key = 'password';
-            propertyBinding.obj = target['user'];
+            propertyBinding.obj = target.user;
             propertyBinding.bindProperty();
             expect(propertyBinding.obj).ownPropertyDescriptor(propertyBinding.key).to.have.property('set');
         })

@@ -59,7 +59,7 @@ export class Binding {
         const handler = (event) => {
             const value = event.target.value;
 
-            obj[key] = value;
+            obj[key] = this.val = value;
         }
 
         node.addEventListener('keyup', handler);
