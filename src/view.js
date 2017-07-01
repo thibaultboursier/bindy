@@ -127,10 +127,4 @@ export class View {
 
         return this;
     }
-
-    /**
-     * Update bindings.
-     * @param {Object}
-     */
-    update() {}
 }
