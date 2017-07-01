@@ -44,9 +44,9 @@ export const parseAttributes = function parseAttributes(attributes, regExp) {
             return {
                 binder,
                 value
-            }
+            };
         });
-}
+};
 
 /**
  * Parse keypath.
@@ -94,7 +94,6 @@ export const parseKeypath = function parseKeypath({
 export const parseNode = function parseNode(node) {
     const {
         attributes,
-        childNodes,
         nodeType,
         textContent
     } = node;
@@ -108,7 +107,7 @@ export const parseNode = function parseNode(node) {
             regExp = getInterpolationRegExp();
             return parseTextNode(textContent, regExp);
     }
-}
+};
 
 /**
  * Parse text node to find expressions.
@@ -126,4 +125,4 @@ export const parseTextNode = function parseTextNode(textContent, regExp) {
             value
         }];
     }
-}
+};

@@ -37,7 +37,7 @@ export class View {
      */
     addBinder(key, fn) {
         if (binders.hasOwnProperty(key)) {
-            error(`Binding (${key}) is already registered.`);
+            utils.error(`Binding (${key}) is already registered.`);
         }
 
         this.binders[key] = fn;

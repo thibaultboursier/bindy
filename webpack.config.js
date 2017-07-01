@@ -9,12 +9,17 @@ module.exports = {
         library: 'Bindy'
     },
     module: {
-        loaders: [{
-            test: /\.css$/,
-            loader: "style!css"
-        }, {
-            test: /\.js$/,
-            loader: 'babel-loader?presets[]=env'
-        }]
+        rules: [{
+                enforce: "pre",
+                test: /\.js$/,
+                exclude: /node_modules/,
+                loader: "eslint-loader",
+            },
+            {
+                test: /\.js$/,
+                exclude: /node_modules/,
+                loader: "babel-loader?presets[]=env",
+            },
+        ],
     }
 };

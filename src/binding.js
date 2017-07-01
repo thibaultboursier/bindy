@@ -51,16 +51,13 @@ export class Binding {
         const {
             node,
             key,
-            keypath,
-            obj,
-            target,
-            val
+            obj
         } = this;
         const handler = (event) => {
             const value = event.target.value;
 
             obj[key] = this.val = value;
-        }
+        };
 
         node.addEventListener('keyup', handler);
         node.addEventListener('keydown', handler);
@@ -75,9 +72,7 @@ export class Binding {
     bindProperty() {
         const {
             key,
-            keypath,
             obj,
-            target,
             val
         } = this;
 
@@ -94,8 +89,8 @@ export class Binding {
             Object.defineProperty(obj, key, {
                 enumerable: true,
                 set: (newVal) => this.update(newVal)
-            })
-        };
+            });
+        }
 
         return this;
     }
