@@ -70,6 +70,14 @@ describe('Binding', () => {
         });
     });
 
+    describe('#bindEvent', () => {
+
+        it('should add event listeners on binding\'s node', () => {
+
+        })
+    });
+
+
     describe('#bindProperty', () => {
 
         it('should add a setter on property', () => {
@@ -81,6 +89,38 @@ describe('Binding', () => {
             propertyBinding.obj = target.user;
             propertyBinding.bindProperty();
             expect(propertyBinding.obj).ownPropertyDescriptor(propertyBinding.key).to.have.property('set');
+        });
+    });
+
+    describe('#emit', () => {
+
+        it('should dispatch update event', () => {
+
         })
+    });
+
+    describe('#parseKeypath', () => {
+
+        it('should add parsing result to instance', () => {
+
+        });
+    });
+
+    describe('#render', () => {
+
+        it('should update DOM element\'s content with property\'s value', () => {
+
+        });
+    });
+
+    describe('#update', () => {
+
+        it('should update property value', () => {
+
+        });
+
+        it('should call render method', () => {
+
+        });
     });
 });
