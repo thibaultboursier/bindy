@@ -4,6 +4,9 @@ const {
 const utils = require('./utils');
 const binders = require('./binders');
 const parser = require('./parser');
+const {
+    Watcher
+} = require('./watcher');
 
 /**
  * Class representing a view.
@@ -13,6 +16,7 @@ export class View {
      * Create a view.
      * @param {Object} target - Target.
      * @param {HTMLElement} DOM - DOM. 
+     * @constructor
      */
     constructor(target, DOM) {
         if (!target) {
@@ -27,6 +31,7 @@ export class View {
         this.DOM = DOM;
         this.bindings = [];
         this.binders = binders;
+        this.watcher = new Watcher();
     }
 
     /**
@@ -61,11 +66,16 @@ export class View {
      */
     getChildNodes(node, callback) {
         const {
-            childNodes
+            childNodes,
+            nodeType
         } = node;
 
         if (typeof callback === 'function') {
             callback.call(this, node);
+        }
+
+        if (nodeType === 1 && node.getAttribute('bd-for')) {
+            return;
         }
 
         // Call recursively getChildNodes method.
@@ -95,14 +105,16 @@ export class View {
     }) {
         const {
             DOM,
-            target
+            target,
+            watcher
         } = this;
         const binding = new Binding({
             DOM,
             node,
             keypath,
             target,
-            type
+            type,
+            watcher
         });
 
         this.bindings.push(binding);

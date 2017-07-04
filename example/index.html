@@ -18,19 +18,35 @@
     <p>
       <input type="text" bd-model="user.city" placeholder="Change city value">
     </p>
+    <h2>Sisters :</h2>
+    <ul>
+      <li bd-for="sister of user.sisters">
+        <span bd-text="sister.name"></span>, <span bd-text="sister.age"></span> years old.
+      </li>
+    </ul>
   </div>
-  
+
   <script src="../dist/bindy.js"></script>
   <script>
     let target = {
       user: {
         name: 'Peter',
-        city: 'Dublin'
+        city: 'Dublin',
+        sisters: [{
+            name: 'Lucy',
+            age: 19
+          },
+          {
+            name: 'Anna',
+            age: 24
+          }
+        ]
       }
     };
 
     const container = document.querySelector('#container');
     const view = Bindy.bind(target, container);
+    console.log(view)
   </script>
 </body>
 

@@ -49,8 +49,7 @@ describe('Binding', () => {
 
         it('should init event binding with object refreshing when value changes', () => {
             const {
-                node,
-                target
+                node
             } = eventBinding;
             const {
                 window
@@ -74,9 +73,8 @@ describe('Binding', () => {
 
         it('should add event listeners on binding\'s node', () => {
 
-        })
+        });
     });
-
 
     describe('#bindProperty', () => {
 
@@ -96,7 +94,7 @@ describe('Binding', () => {
 
         it('should dispatch update event', () => {
 
-        })
+        });
     });
 
     describe('#parseKeypath', () => {

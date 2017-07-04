@@ -49,6 +49,29 @@ export const parseAttributes = function parseAttributes(attributes, regExp) {
 };
 
 /**
+ * Parse for-of.
+ * @param {Object}
+ * @return {Object}
+ */
+export const parseForOf = function parseForOf({
+    target,
+    value
+}) {
+    const [variable, keyword, keypath] = value.split(' ');
+    const parsing = parseKeypath({
+        keypath,
+        target
+    });
+
+    // Merge parsing with value spliting.
+    return Object.assign(parsing, {
+        keypath,
+        keyword,
+        variable
+    });
+};
+
+/**
  * Parse keypath.
  * @param {Object}
  * @return {Object}
@@ -76,8 +99,6 @@ export const parseKeypath = function parseKeypath({
 
         return prev ? prev[curr] : undefined;
     }, target);
-
-    obj = obj || target;
 
     return {
         key,

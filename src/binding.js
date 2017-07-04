@@ -8,20 +8,23 @@ export class Binding {
     /**
      * Create a binding.
      * @param {Object}
+     * @constructor
      */
     constructor({
         DOM,
         node,
         keypath,
         target,
-        type
+        type,
+        watcher
     }) {
         Object.assign(this, {
             DOM,
             node,
             keypath,
             target,
-            type
+            type,
+            watcher
         });
     }
 
@@ -72,24 +75,30 @@ export class Binding {
     bindProperty() {
         const {
             key,
+            keypath,
             obj,
-            val
+            val,
+            watcher
         } = this;
-
-        // Binding's value is rendered if it's defined.
-        if (val) {
-            this.render(val);
-        }
 
         if (!obj) {
             utils.error('Binding\'s object is not defined');
         }
 
-        if (obj.hasOwnProperty(key)) {
-            Object.defineProperty(obj, key, {
-                enumerable: true,
-                set: (newVal) => this.update(newVal)
-            });
+        if (!obj.hasOwnProperty(key)) {
+            return;
+        }
+
+        // Register keypath and trigger callback when value changes.
+        watcher.watch(obj, key, keypath, (newVal) => {
+            this.update(newVal);
+        });
+
+        obj[key] = val;
+
+        // Binding's value is rendered if it's defined.
+        if (val) {
+            this.render(val);
         }
 
         return this;
