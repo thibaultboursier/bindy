@@ -13,12 +13,11 @@
   <div id="container">
     <h2>All users :</h2>
     <ul>
-      First user is {{users.0.firstName}} !
-
       <li bd-for="user of users">
         <ul>
           <li>{{user.firstName}}</li>
           <li>{{user.lastName}}</li>
+          <li>First name is {{user.firstName}} and last name is {{user.lastName}}</li>
           <li>
             <input type="text" bd-model="user.firstName" placeholder="Modify first name">
           </li>
@@ -85,7 +84,7 @@
 
     const container = document.querySelector('#container');
     const view = Bindy.bind(scope, container);
-    console.log(view)
+    console.log(view);
   </script>
 </body>
 

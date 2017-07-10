@@ -394,7 +394,6 @@ var View = exports.View = function () {
                 type: type,
                 watcher: watcher
             });
-
             this.bindings.push(binding);
 
             return binding;
@@ -614,14 +613,12 @@ var Binding = exports.Binding = function () {
 
             var key = this.key,
                 keypath = this.keypath,
-                obj = this.obj,
+                target = this.target,
+                _obj = this.obj,
+                obj = _obj === undefined ? target : _obj,
                 val = this.val,
                 watcher = this.watcher;
 
-
-            if (!obj) {
-                utils.error('Binding\'s object is not defined');
-            }
 
             if (!obj.hasOwnProperty(key)) {
                 return;
@@ -690,13 +687,15 @@ var Binding = exports.Binding = function () {
             var val = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.val;
             var nodeType = this.node.nodeType;
 
+            var regexp = parser.getInterpolationRegExp();
 
             switch (nodeType) {
                 case 1:
                     this.node.innerText = val;
                     break;
                 case 3:
-                    this.node.textContent = val;
+                    this.originTextContent = this.originTextContent || this.node.textContent;
+                    this.node.textContent = this.originTextContent.replace(regexp, val);
             }
 
             return this;

@@ -116,7 +116,6 @@ export class View {
             type,
             watcher
         });
-
         this.bindings.push(binding);
 
         return binding;

@@ -76,14 +76,11 @@ export class Binding {
         const {
             key,
             keypath,
-            obj,
+            target,
+            obj = target,
             val,
             watcher
         } = this;
-
-        if (!obj) {
-            utils.error('Binding\'s object is not defined');
-        }
 
         if (!obj.hasOwnProperty(key)) {
             return;
@@ -144,13 +141,15 @@ export class Binding {
         const {
             nodeType
         } = this.node;
+        const regexp = parser.getInterpolationRegExp();
 
         switch (nodeType) {
             case 1:
                 this.node.innerText = val;
                 break;
             case 3:
-                this.node.textContent = val;
+                this.originTextContent = this.originTextContent || this.node.textContent;
+                this.node.textContent = this.originTextContent.replace(regexp, val);
         }
 
         return this;
