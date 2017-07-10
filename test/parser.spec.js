@@ -37,12 +37,12 @@ describe('Parser', () => {
             expect(parsing).to.have.lengthOf(2);
             expect(parsing[0]).to.be.an('object');
             expect(parsing[0]).to.deep.equal({
-                binder: 'text',
+                binderKey: 'text',
                 value: 'user.name'
             });
             expect(parsing[1]).to.be.an('object');
             expect(parsing[1]).to.deep.equal({
-                binder: 'model',
+                binderKey: 'model',
                 value: 'user.city'
             });
         });
@@ -86,7 +86,7 @@ describe('Parser', () => {
                 expect(parsing).to.be.an('array');
                 expect(parsing).to.have.lengthOf(1);
                 expect(parsing[0]).to.deep.equal({
-                    binder: 'text',
+                    binderKey: 'text',
                     value: 'user.name'
                 });
             });
@@ -103,7 +103,7 @@ describe('Parser', () => {
                 expect(parsing).to.be.an('array');
                 expect(parsing).to.have.lengthOf(1);
                 expect(parsing[0]).to.deep.equal({
-                    binder: 'text',
+                    binderKey: 'text',
                     value: 'user.city'
                 });
             });
@@ -120,7 +120,7 @@ describe('Parser', () => {
             expect(parsing).to.have.lengthOf(1);
             expect(parsing[0]).to.be.an('object');
             expect(parsing[0]).to.deep.equal({
-                binder: 'text',
+                binderKey: 'text',
                 value: 'foo.bar'
             });
         });
