@@ -11,41 +11,80 @@
 <body>
 
   <div id="container">
-    <h1>Welcome {{user.name}}</h1>
-    <p>
-      Your city is <span bd-text="user.city"></span>
-    </p>
-    <p>
-      <input type="text" bd-model="user.city" placeholder="Change city value">
-    </p>
-    <h2>Sisters :</h2>
+    <h2>All users :</h2>
     <ul>
-      <li bd-for="sister of user.sisters">
-        <span bd-text="sister.name"></span>, <span bd-text="sister.age"></span> years old.
+      First user is {{users.0.firstName}} !
+
+      <li bd-for="user of users">
+        <ul>
+          <li>{{user.firstName}}</li>
+          <li>{{user.lastName}}</li>
+          <li>
+            <input type="text" bd-model="user.firstName" placeholder="Modify first name">
+          </li>
+          <li>
+            <ul>
+              <li bd-for="hobby in user.hobbies">
+                <span bd-text="hobby.type"></span>
+                <ul>
+                  <li bd-for="trophy of hobby.trophies">
+                    année {{trophy.year}}
+                    <br>
+                    <input type="text" bd-model="trophy.year" placeholder="Modify trophy year">
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+        </ul>
       </li>
     </ul>
   </div>
 
   <script src="../dist/bindy.js"></script>
   <script>
-    let target = {
-      user: {
-        name: 'Peter',
-        city: 'Dublin',
-        sisters: [{
-            name: 'Lucy',
-            age: 19
-          },
-          {
-            name: 'Anna',
-            age: 24
-          }
-        ]
-      }
+    let scope = {
+      users: [{
+        firstName: 'John',
+        lastName: 'Simoni',
+        hobbies: [{
+          type: 'football',
+          trophies: [{
+            year: '2017'
+          }, {
+            year: '2013'
+          }]
+        }, {
+          type: 'swimming',
+          trophies: [{
+            year: '2016'
+          }, {
+            year: '2015'
+          }]
+        }]
+      }, {
+        firstName: 'Paul',
+        lastName: 'Lee',
+        hobbies: [{
+          type: 'badminton',
+          trophies: [{
+            year: '2016'
+          }, {
+            year: '2009'
+          }]
+        }, {
+          type: 'swimming',
+          trophies: [{
+            year: '2016'
+          }, {
+            year: '2002'
+          }]
+        }]
+      }]
     };
 
     const container = document.querySelector('#container');
-    const view = Bindy.bind(target, container);
+    const view = Bindy.bind(scope, container);
     console.log(view)
   </script>
 </body>

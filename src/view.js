@@ -132,9 +132,17 @@ export class View {
 
             // For each parsing result, binder is called.
             parsing && parsing.forEach(({
-                binder,
+                binderKey,
                 value
-            }) => this.binders[binder].call(this, node, value));
+            }) => {
+                const binder = this.binders[binderKey];
+
+                if (!binder) {
+                    return utils.error(`Binder (${binderKey}) is not defined.`);
+                }
+
+                binder.call(this, node, value);
+            });
         });
 
         return this;

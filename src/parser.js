@@ -39,10 +39,10 @@ export const parseAttributes = function parseAttributes(attributes, regExp) {
             value,
             name
         }) => {
-            const binder = name.replace(regExp, '');
+            const binderKey = name.replace(regExp, '');
 
             return {
-                binder,
+                binderKey,
                 value
             };
         });
@@ -136,13 +136,13 @@ export const parseNode = function parseNode(node) {
  * @param {String} regExp - Regular expression.
  */
 export const parseTextNode = function parseTextNode(textContent, regExp) {
-    const binder = 'text';
+    const binderKey = 'text';
 
     if (regExp.test(textContent)) {
         const value = textContent.trim().match(regExp)[1];
 
         return [{
-            binder,
+            binderKey,
             value
         }];
     }

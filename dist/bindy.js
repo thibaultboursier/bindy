@@ -70,7 +70,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 3);
+/******/ 	return __webpack_require__(__webpack_require__.s = 4);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -84,16 +84,181 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
+var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+
+var configuration = __webpack_require__(2);
+
+/**
+ * Get attribute RegExp.
+ * @return {String}
+ */
+var getAttributeRegExp = exports.getAttributeRegExp = function getAttributeRegExp() {
+    var prefix = configuration.prefix;
+
+
+    return new RegExp(prefix + '-');
+};
+
+/**
+ * Get interpolation RegExp.
+ * @return {Object}
+ */
+var getInterpolationRegExp = exports.getInterpolationRegExp = function getInterpolationRegExp() {
+    var delimiters = configuration.delimiters;
+
+    var _delimiters = _slicedToArray(delimiters, 2),
+        start = _delimiters[0],
+        end = _delimiters[1];
+
+    return new RegExp(start + '(.*?)' + end);
+};
+
+/**
+ * Parse attributes to find binders.
+ * @param {String} attributes - Node attributes.
+ * @param {String} regExp - Regular expression.
+ */
+var parseAttributes = exports.parseAttributes = function parseAttributes(attributes, regExp) {
+    return Array.from(attributes).filter(function (_ref) {
+        var name = _ref.name;
+        return regExp.test(name);
+    }).map(function (_ref2) {
+        var value = _ref2.value,
+            name = _ref2.name;
+
+        var binderKey = name.replace(regExp, '');
+
+        return {
+            binderKey: binderKey,
+            value: value
+        };
+    });
+};
+
+/**
+ * Parse for-of.
+ * @param {Object}
+ * @return {Object}
+ */
+var parseForOf = exports.parseForOf = function parseForOf(_ref3) {
+    var target = _ref3.target,
+        value = _ref3.value;
+
+    var _value$split = value.split(' '),
+        _value$split2 = _slicedToArray(_value$split, 3),
+        variable = _value$split2[0],
+        keyword = _value$split2[1],
+        keypath = _value$split2[2];
+
+    var parsing = parseKeypath({
+        keypath: keypath,
+        target: target
+    });
+
+    // Merge parsing with value spliting.
+    return Object.assign(parsing, {
+        keypath: keypath,
+        keyword: keyword,
+        variable: variable
+    });
+};
+
+/**
+ * Parse keypath.
+ * @param {Object}
+ * @return {Object}
+ */
+var parseKeypath = exports.parseKeypath = function parseKeypath(_ref4) {
+    var keypath = _ref4.keypath,
+        target = _ref4.target;
+
+    var keys = keypath.split('.');
+    var length = keys.length;
+
+    var obj = void 0;
+    var key = void 0;
+
+    var val = keys.reduce(function (prev, curr, index) {
+        switch (index) {
+            case length - 1:
+                key = curr;
+                break;
+            case length - 2:
+                obj = prev[curr];
+                break;
+        }
+
+        return prev ? prev[curr] : undefined;
+    }, target);
+
+    return {
+        key: key,
+        obj: obj,
+        val: val
+    };
+};
+
+/**
+ * Parse node.
+ * @param {Object} node - Node. 
+ * @return {Object}
+ */
+var parseNode = exports.parseNode = function parseNode(node) {
+    var attributes = node.attributes,
+        nodeType = node.nodeType,
+        textContent = node.textContent;
+
+    var regExp = void 0;
+
+    switch (nodeType) {
+        case 1:
+            regExp = getAttributeRegExp();
+            return parseAttributes(attributes, regExp);
+        case 3:
+            regExp = getInterpolationRegExp();
+            return parseTextNode(textContent, regExp);
+    }
+};
+
+/**
+ * Parse text node to find expressions.
+ * @param {String} textContent - Node text content.
+ * @param {String} regExp - Regular expression.
+ */
+var parseTextNode = exports.parseTextNode = function parseTextNode(textContent, regExp) {
+    var binderKey = 'text';
+
+    if (regExp.test(textContent)) {
+        var value = textContent.trim().match(regExp)[1];
+
+        return [{
+            binderKey: binderKey,
+            value: value
+        }];
+    }
+};
+
+/***/ }),
+/* 1 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var _require = __webpack_require__(4),
+var _require = __webpack_require__(5),
     Binding = _require.Binding;
 
-var utils = __webpack_require__(2);
+var utils = __webpack_require__(3);
 var binders = __webpack_require__(6);
-var parser = __webpack_require__(1);
+var parser = __webpack_require__(0);
 
 var _require2 = __webpack_require__(8),
     Watcher = _require2.Watcher;
@@ -250,9 +415,16 @@ var View = exports.View = function () {
 
                 // For each parsing result, binder is called.
                 parsing && parsing.forEach(function (_ref2) {
-                    var binder = _ref2.binder,
+                    var binderKey = _ref2.binderKey,
                         value = _ref2.value;
-                    return _this2.binders[binder].call(_this2, node, value);
+
+                    var binder = _this2.binders[binderKey];
+
+                    if (!binder) {
+                        return utils.error('Binder (' + binderKey + ') is not defined.');
+                    }
+
+                    binder.call(_this2, node, value);
                 });
             });
 
@@ -264,172 +436,19 @@ var View = exports.View = function () {
 }();
 
 /***/ }),
-/* 1 */
+/* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
-
-var configuration = __webpack_require__(5);
-
-/**
- * Get attribute RegExp.
- * @return {String}
- */
-var getAttributeRegExp = exports.getAttributeRegExp = function getAttributeRegExp() {
-    var prefix = configuration.prefix;
-
-
-    return new RegExp(prefix + '-');
-};
-
-/**
- * Get interpolation RegExp.
- * @return {Object}
- */
-var getInterpolationRegExp = exports.getInterpolationRegExp = function getInterpolationRegExp() {
-    var delimiters = configuration.delimiters;
-
-    var _delimiters = _slicedToArray(delimiters, 2),
-        start = _delimiters[0],
-        end = _delimiters[1];
-
-    return new RegExp(start + '(.*?)' + end);
-};
-
-/**
- * Parse attributes to find binders.
- * @param {String} attributes - Node attributes.
- * @param {String} regExp - Regular expression.
- */
-var parseAttributes = exports.parseAttributes = function parseAttributes(attributes, regExp) {
-    return Array.from(attributes).filter(function (_ref) {
-        var name = _ref.name;
-        return regExp.test(name);
-    }).map(function (_ref2) {
-        var value = _ref2.value,
-            name = _ref2.name;
-
-        var binder = name.replace(regExp, '');
-
-        return {
-            binder: binder,
-            value: value
-        };
-    });
-};
-
-/**
- * Parse for-of.
- * @param {Object}
- * @return {Object}
- */
-var parseForOf = exports.parseForOf = function parseForOf(_ref3) {
-    var target = _ref3.target,
-        value = _ref3.value;
-
-    var _value$split = value.split(' '),
-        _value$split2 = _slicedToArray(_value$split, 3),
-        variable = _value$split2[0],
-        keyword = _value$split2[1],
-        keypath = _value$split2[2];
-
-    var parsing = parseKeypath({
-        keypath: keypath,
-        target: target
-    });
-
-    // Merge parsing with value spliting.
-    return Object.assign(parsing, {
-        keypath: keypath,
-        keyword: keyword,
-        variable: variable
-    });
-};
-
-/**
- * Parse keypath.
- * @param {Object}
- * @return {Object}
- */
-var parseKeypath = exports.parseKeypath = function parseKeypath(_ref4) {
-    var keypath = _ref4.keypath,
-        target = _ref4.target;
-
-    var keys = keypath.split('.');
-    var length = keys.length;
-
-    var obj = void 0;
-    var key = void 0;
-
-    var val = keys.reduce(function (prev, curr, index) {
-        switch (index) {
-            case length - 1:
-                key = curr;
-                break;
-            case length - 2:
-                obj = prev[curr];
-                break;
-        }
-
-        return prev ? prev[curr] : undefined;
-    }, target);
-
-    return {
-        key: key,
-        obj: obj,
-        val: val
-    };
-};
-
-/**
- * Parse node.
- * @param {Object} node - Node. 
- * @return {Object}
- */
-var parseNode = exports.parseNode = function parseNode(node) {
-    var attributes = node.attributes,
-        nodeType = node.nodeType,
-        textContent = node.textContent;
-
-    var regExp = void 0;
-
-    switch (nodeType) {
-        case 1:
-            regExp = getAttributeRegExp();
-            return parseAttributes(attributes, regExp);
-        case 3:
-            regExp = getInterpolationRegExp();
-            return parseTextNode(textContent, regExp);
-    }
-};
-
-/**
- * Parse text node to find expressions.
- * @param {String} textContent - Node text content.
- * @param {String} regExp - Regular expression.
- */
-var parseTextNode = exports.parseTextNode = function parseTextNode(textContent, regExp) {
-    var binder = 'text';
-
-    if (regExp.test(textContent)) {
-        var value = textContent.trim().match(regExp)[1];
-
-        return [{
-            binder: binder,
-            value: value
-        }];
-    }
+module.exports = {
+    delimiters: ['{{', '}}'],
+    prefix: 'bd'
 };
 
 /***/ }),
-/* 2 */
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -447,7 +466,7 @@ var error = exports.error = function error(message) {
 };
 
 /***/ }),
-/* 3 */
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -455,7 +474,7 @@ var error = exports.error = function error(message) {
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var _require = __webpack_require__(0),
+var _require = __webpack_require__(1),
     View = _require.View;
 
 /**
@@ -489,7 +508,7 @@ Bindy.bind = function () {
 module.exports = Bindy;
 
 /***/ }),
-/* 4 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -503,8 +522,8 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var parser = __webpack_require__(1);
-var utils = __webpack_require__(2);
+var parser = __webpack_require__(0);
+var utils = __webpack_require__(3);
 
 /**
  * Class representing a binding.
@@ -704,26 +723,14 @@ var Binding = exports.Binding = function () {
 }();
 
 /***/ }),
-/* 5 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-module.exports = {
-    delimiters: ['{{', '}}'],
-    prefix: 'bd'
-};
-
-/***/ }),
 /* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var View = __webpack_require__(0);
-var parser = __webpack_require__(1);
+var View = __webpack_require__(1);
+var parser = __webpack_require__(0);
 var template = __webpack_require__(7);
 
 module.exports = {
@@ -805,7 +812,7 @@ Object.defineProperty(exports, "__esModule", {
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-var configuration = __webpack_require__(5);
+var configuration = __webpack_require__(2);
 
 /**
  * Create template blocks.
